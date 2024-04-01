@@ -1,0 +1,25 @@
+﻿  Acquisition.cpp
+  AttenuationTable.cpp
+  BooneCoefficients.cpp
+  BooneCoefficientTable.cpp
+  BooneMaterialTable.cpp
+  Detector.cpp
+  LabelMap.cpp
+  Machine.cpp
+  pugixml.cpp
+  Ray.cpp
+  ReadPhantom.cpp
+  Simulation.cpp
+  SimulationCPU.cpp
+  SimulationOCL.cpp
+  Spectrum_Mo_extrapolated.cpp
+  Spectrum_Rh_extrapolated.cpp
+  Spectrum_W_new_pol_withTAILS.cpp
+  Spectrum_W_TASMIP.cpp
+  vector.cpp
+  XPLRayTracing.cpp
+  Generating Code...
+  Compiling...
+  XRayTube.cpp
+  Generating Code...
+  XPLRayTracing.vcxproj -> C:\Users\bbruno\Documents\Visual Studio 2022\OpenVCT\XPLRayTracing\trunk\x64\GPU_release\XPLRayTracing.lib

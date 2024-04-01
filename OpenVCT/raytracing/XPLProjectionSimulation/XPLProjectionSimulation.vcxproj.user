@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommandArguments>attenuationTable.xml configLabel.xml ph56Ell_801_DPerc01_Plate.dat ph56Ell_801_Dperc01_Plate 169</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CPU_debug|x64'">
+    <LocalDebuggerCommandArguments>attenuationTable.xml configCenter.xml ph200u_641_DPerc35_c.dat CPU_ALLC++_Debug 169 /nonoise /noinvsq</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GPU_debug|x64'">
+    <LocalDebuggerCommandArguments>attenuationTable.xml configCenter.xml  weave_this_c.vctx GPU_Debug 169 /nonoise /noinvsq</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\$(Configuration)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+</Project>
