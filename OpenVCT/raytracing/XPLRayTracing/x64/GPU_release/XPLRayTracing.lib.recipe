@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\bbruno\Documents\Visual Studio 2022\OpenVCT\XPLRayTracing\trunk\attenuationTable.xml</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\bbruno\Documents\Visual Studio 2022\OpenVCT\XPLRayTracing\trunk\configLabel.xml</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>
