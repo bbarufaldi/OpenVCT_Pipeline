@@ -1,0 +1,430 @@
+
+[Mon Apr  1 20:11:23 2024]:
+
+INFO : Software version is $Id$ $Rev$, Build Date: Mon Apr  1 17:52:16 2024.
+INFO : Input XML File is ./Projection.xml
+INFO : From XML input file:
+INFO : Projector_Config
+INFO : 	 Program_Name:         BreastPhantomRayTracingProjector
+INFO : 	 Software_Version:     1.0
+INFO : 	 Input_Phantom:        noise_1867251184_crop.vctx
+INFO : 	 Output_Folder:        noise_1867251184_crop-proj
+INFO : 	 Has_Noise:            true
+INFO : 	 Has_Invsq:            true
+INFO : 	 Elec_Noise:           3
+INFO : 	 Gain:                 0.2
+INFO : 	 Prop_Const:           0.0038
+INFO : 	 Random_Seed:          338
+INFO : Exposure_Settings
+INFO : 	 Spectrum_ID:          2
+INFO : 	 Anode_Material:       TUNGSTEN
+INFO : 	 Filter:
+INFO : 	     Material:         Aluminum
+INFO : 	     MaterialZ:        13
+INFO : 	     Thickness_mm:     0.7
+INFO : 	 KVP:                  33
+INFO : 	 Exposure:             60
+INFO : 	 Phantom_Thickness_mm: 62
+INFO : 	 Density_Coefficient:  10
+INFO : Detector
+INFO : 	 Element_Size_mm:
+INFO : 	     X:                0.14
+INFO : 	     Y:                0.14
+INFO : 	 Element_Count:
+INFO : 	     X:                2048
+INFO : 	     Y:                1664
+INFO : 	 Thickness_mm:         0.1
+INFO : 	 Material:             0
+INFO : 	 Bits_Allocated:       16
+INFO : 	 Bits_Stored:          14
+INFO : 	 High_Bit:             13
+INFO : 	 Has_Volume_Offset:    false
+INFO : 	 Volume_Offset_mm:
+INFO : 	     X:                0
+INFO : 	     Y:                0
+INFO : 	     Z:                0
+INFO : Acquisitions:
+INFO : 	 Number_Acquisitions:  15
+INFO : 	     Acquisition :
+INFO : 	         ID:           0
+INFO : 	         Acq UID:      011.685169686552.20180203161823302
+INFO : 	         Focal Spot x: 91.247
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 694.027
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           1
+INFO : 	         Acq UID:      011.685169686552.20180203161823356
+INFO : 	         Focal Spot x: 78.271
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 695.61
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           2
+INFO : 	         Acq UID:      011.685169686552.20180203161823404
+INFO : 	         Focal Spot x: 65.268
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 696.951
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           3
+INFO : 	         Acq UID:      011.685169686552.20180203161823449
+INFO : 	         Focal Spot x: 52.241
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 698.048
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           4
+INFO : 	         Acq UID:      011.685169686552.20180203161823500
+INFO : 	         Focal Spot x: 39.197
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 698.902
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           5
+INFO : 	         Acq UID:      011.685169686552.20180203161823553
+INFO : 	         Focal Spot x: 26.139
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 699.512
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           6
+INFO : 	         Acq UID:      011.685169686552.20180203161823607
+INFO : 	         Focal Spot x: 13.072
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 699.878
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           7
+INFO : 	         Acq UID:      011.685169686552.20180203161823658
+INFO : 	         Focal Spot x: 0
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 700
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           8
+INFO : 	         Acq UID:      011.685169686552.20180203161823710
+INFO : 	         Focal Spot x: -13.072
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 699.878
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           9
+INFO : 	         Acq UID:      011.685169686552.20180203161823776
+INFO : 	         Focal Spot x: -26.139
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 699.512
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           10
+INFO : 	         Acq UID:      011.685169686552.20180203161823824
+INFO : 	         Focal Spot x: -39.197
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 698.902
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           11
+INFO : 	         Acq UID:      011.685169686552.20180203161823876
+INFO : 	         Focal Spot x: -52.241
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 698.048
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           12
+INFO : 	         Acq UID:      011.685169686552.20180203161823930
+INFO : 	         Focal Spot x: -65.268
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 696.951
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           13
+INFO : 	         Acq UID:      011.685169686552.20180203161823980
+INFO : 	         Focal Spot x: -78.271
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 695.61
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : 	     Acquisition :
+INFO : 	         ID:           14
+INFO : 	         Acq UID:      011.685169686552.20180203161824030
+INFO : 	         Focal Spot x: -91.247
+INFO : 	         Focal Spot y: 0
+INFO : 	         Focal Spot z: 694.027
+INFO : 	         Det Origin x: -143.36
+INFO : 	         Det Origin y: 0
+INFO : 	         Det Origin z: 0
+INFO : 	         Det SVectorX: 1
+INFO : 	         Det SVectorY: 0
+INFO : 	         Det SVectorZ: 0
+INFO : 	         Det TVectorX: 0
+INFO : 	         Det TVectorY: 1
+INFO : 	         Det TVectorZ: 0
+INFO : Detector size is 2048x1664
+INFO : DICOM template: hologic.dcm
+INFO : Created folder noise_1867251184_crop-proj to receive DICOM projection files
+INFO : Commencing simulation of acquisition 0 of 15
+INFO : Acq 0 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 91.247 / 694.027
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:11:39 2024]:
+
+INFO : Commencing simulation of acquisition 1 of 15
+INFO : Acq 1 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 78.271 / 695.61
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:11:48 2024]:
+
+INFO : Commencing simulation of acquisition 2 of 15
+INFO : Acq 2 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 65.268 / 696.951
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:11:57 2024]:
+
+INFO : Commencing simulation of acquisition 3 of 15
+INFO : Acq 3 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 52.241 / 698.048
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:05 2024]:
+
+INFO : Commencing simulation of acquisition 4 of 15
+INFO : Acq 4 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 39.197 / 698.902
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:13 2024]:
+
+INFO : Commencing simulation of acquisition 5 of 15
+INFO : Acq 5 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 26.139 / 699.512
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:22 2024]:
+
+INFO : Commencing simulation of acquisition 6 of 15
+INFO : Acq 6 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 13.072 / 699.878
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:30 2024]:
+
+INFO : Commencing simulation of acquisition 7 of 15
+INFO : Acq 7 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / 0 / 700
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:39 2024]:
+
+INFO : Commencing simulation of acquisition 8 of 15
+INFO : Acq 8 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -13.072 / 699.878
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:48 2024]:
+
+INFO : Commencing simulation of acquisition 9 of 15
+INFO : Acq 9 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -26.139 / 699.512
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:12:56 2024]:
+
+INFO : Commencing simulation of acquisition 10 of 15
+INFO : Acq 10 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -39.197 / 698.902
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:13:04 2024]:
+
+INFO : Commencing simulation of acquisition 11 of 15
+INFO : Acq 11 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -52.241 / 698.048
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:13:13 2024]:
+
+INFO : Commencing simulation of acquisition 12 of 15
+INFO : Acq 12 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -65.268 / 696.951
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:13:21 2024]:
+
+INFO : Commencing simulation of acquisition 13 of 15
+INFO : Acq 13 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -78.271 / 695.61
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:13:29 2024]:
+
+INFO : Commencing simulation of acquisition 14 of 15
+INFO : Acq 14 is complete. About to create corresponding DICOM file
+INFO : Writing source position (0x6d0e, 0x0e01) as -0 / -91.247 / 694.027
+INFO : Writing Detector position (0x6d0e, 0x0e02) as -232.96 / -143.36 / 0
+INFO : Writing Detector normal Z vector (0x6d0e, 0x0e03) as 0 / 0 / 1
+INFO : Writing Detector normal X vector (0x6d0e, 0x0e04) as 1 / 0 / 0
+INFO : Writing Detector normal Y vector (0x6d0e, 0x0e05) as 0 / 1 / 0
+
+[Mon Apr  1 20:13:39 2024]:
+
+INFO : Completed on fb775b3fbe8a at UTC Mon Apr  1 20:13:39 2024
+Elapsed Time: 129711 msec.INFO : 
+
+[Mon Apr  1 20:13:39 2024]:
+
