@@ -191,9 +191,6 @@ class SystemConfig:
             ]
         },
         "Noise_Config": {
-            # "Parameters": "noise/Parameters_Hologic_DBT_quadratic.mat",
-            # "Kernel": "noise/Kernel_Hologic_DBT.mat",
-            # "Reference": "noise/Reference_Hologic_DBT_31_60.mat",
             "Parameters": "noise/param/HOLOGIC_3D.npz",
             "Kernel": "noise/kernel/HOLOGIC_3D",
             "Reference": "noise/full/HOLOGIC_3D",

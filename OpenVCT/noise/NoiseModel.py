@@ -12,7 +12,7 @@ Steps:
 Key Functions:
 - addNoise: Applies the loaded noise model to the tomosynthesis images for correction.
 
-Developed by Bruno Barufaldi (bruno.barufaldi@pennmedicine.upenn.edu).
+Edited by Bruno Barufaldi (bruno.barufaldi@pennmedicine.upenn.edu).
 Credits to Arthur Costa, Rennan Brandao, Rodrigo Vimieiro, Lucas Borges, and Marcelo Costa from LAVI 
 for providing the scatter models.
 """
