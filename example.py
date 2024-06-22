@@ -12,8 +12,6 @@ import helpers.VctToolkit.Constants as config
 import subprocess
 import OpenVCT.noise.NoiseModel as noise
 import os
-import pathlib
-import numpy as np
 import OpenVCT.reconstruction.FilteredBackProjection as fbp
 import OpenVCT.reconstruction.ConeBeamCTBackProjection as cbp
 
