@@ -1,21 +1,22 @@
 """
-This code snippet demonstrates how to add a noise model from clinical tomosynthesis to the noise.Model class. 
+This code snippet demonstrates how to add a noise model from clinical mammography to the noise.Model class. 
 The noise model is provided by LAVI (Laboratory of Computer Vision) and is designed to be integrated into 
 clinical systems for enhanced image analysis. 
 
 Steps:
 1. Import necessary libraries and dependencies.
 2. Define the noise.Model class, including its attributes and methods.
-3. Implement a method to load noise models from clinical tomosynthesis data.
+3. Implement a method to load noise models from clinical data.
 4. Integrate the noise model into the image analysis workflow.
 
 Key Functions:
-- addNoise: Applies the loaded noise model to the tomosynthesis images for correction.
+- addNoise: Applies the loaded noise model to the images for correction.
 
 Edited by Bruno Barufaldi (bruno.barufaldi@pennmedicine.upenn.edu).
 Credits to Arthur Costa, Rennan Brandao, Rodrigo Vimieiro, Lucas Borges, and Marcelo Costa from LAVI 
 for providing the scatter models.
 """
+
 import numpy as np
 import pathlib
 import pydicom
@@ -30,32 +31,24 @@ class NoiseModel:
         self.config = config
         self.input_folder = input_folder
         self.output_folder = output_folder
-
-    def readDicomVolume(self, dir2Read, imgSize):      
-        # List dicom files
-        dcmFiles =  list(pathlib.Path(dir2Read).glob('*.IMA')) +  list(pathlib.Path(dir2Read).glob('*.dcm'))    
-        dcmImg = np.empty([imgSize[0],imgSize[1],len(dcmFiles)])
-        
-        if not dcmFiles:    
-            raise ValueError('No DICOM files found in the specified path.')
-
-        for dcm in dcmFiles:       
-            dcmH = pydicom.dcmread(str(dcm))    
-            ind = int(str(dcm).split('/')[-1].split('_')[-1].split('.')[0])  
-            dcmImg[:,:,ind] = dcmH.pixel_array.astype('float32')        
-        return dcmImg
     
-    def readDicomImage(self, dir2Read, imgSize, index):           
+    def read_dcm_image(self, dir2Read, imgSize, index):
+        file =  dir2Read+"/_"+str(index)+".dcm" 
+
+        if not os.path.exists(file):
+            raise ValueError(file + ' does not exist.')
+
         dcmH = pydicom.dcmread(dir2Read+"/_"+str(index)+".dcm")    
-        dcmImg = dcmH.pixel_array.astype('float32')        
+        dcmImg = dcmH.pixel_array.astype('uint16')        
         return dcmImg
 
-    def addNoise(self):
+    def add_noise(self):
 
-        # Simulation of dose reduction: TODO add to class constants
         nrlz = 1 # Number of realizations of the noisy image
-        kvp = 31
-        fullDosemAs = 60
+        
+        kvp = self.config["Exposure_Settings"]["KVP"]
+        fullDosemAs = self.config["Exposure_Settings"]["Exposure"]
+        
         dose2gen = 100      # % of the full-dose to be used as the base dose for the generated noise and intensity correction
         dose2genprc = dose2gen / 100
 
@@ -72,18 +65,15 @@ class NoiseModel:
         fullDoseMax = fullDose['max']
         fullDoseMean = fullDose['mean']
 
-        nProjs = 15
+        nProjs = self.config["Acquisition_Geometry"]["Number_Acquisitions"]
         nRows = self.config["Detector"]["Element_Count"][0]
         nCols = self.config["Detector"]["Element_Count"][1]
 
-        folder_name = self.input_folder     
-               
-        # Doing an overall mean for correcting value
-        #vctMean = vct_img[vct_mask].mean()     DO WE NEED THIS?      
+        folder_name = self.input_folder         
         
         for n in range(1,nrlz+1):           
             # Directory to save the noisy images with the corrected intensity
-            folder_name_noisy = self.output_folder + '-{}mAs-rlz{}'.format(int(fullDosemAs*dose2genprc),n)
+            folder_name_noisy = self.output_folder + '-{}mAs-rlz{}'.format(int(fullDosemAs*dose2genprc), n)
             if not os.path.exists(folder_name_noisy):
                 os.mkdir(folder_name_noisy)
             
@@ -94,7 +84,7 @@ class NoiseModel:
             
             for z in tqdm(range(nProjs)):
 
-                vct_img = self.readDicomImage(folder_name, (nRows, nCols), z) - tau # Subtracting tau              
+                vct_img = self.read_dcm_image(folder_name, (nRows, nCols), z) - tau # Subtracting tau              
                 vct_mask = vct_img < threshold_otsu(vct_img) #6000
                 
                 # Normalizing the projection based on the fullDose

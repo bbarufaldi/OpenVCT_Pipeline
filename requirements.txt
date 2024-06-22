@@ -9,3 +9,4 @@ minidom-ext
 pathlib
 tqdm
 scipy
+cupy-cuda12x
