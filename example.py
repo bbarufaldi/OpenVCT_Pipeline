@@ -13,25 +13,23 @@ import subprocess
 import OpenVCT.noise.NoiseModel as noise
 import os
 import pathlib
-import pydicom
 import numpy as np
 import OpenVCT.reconstruction.FilteredBackProjection as fbp
 
 os.chdir('./OpenVCT/raytracing') #change pwd
-# writeProjXML = proj.XMLProjector(config.SystemConfig.HOLOGIC, 
-#                                  "vctx/noise_1867251184_crop.vctx", 
-#                                  "proj/noise_1867251184_crop-proj")
+writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 
+                                 phantom_name="vctx/noise_1867251184_crop.vctx", 
+                                 folder_name="proj/noise_1867251184_crop-proj")
 
-# writeProjXML.write_xml("./xml/noise_1867251184.xml")
-
-# subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_1867251184.xml"])
+writeProjXML.write_xml("./xml/noise_1867251184.xml")
+subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_1867251184.xml"])
 
 
 os.chdir('../') #change pwd
-# noise = noise.NoiseModel(config.SystemConfig.HOLOGIC, 
-#                         "raytracing/proj/noise_1867251184_crop-proj",
-#                         "noise/proj/noise_1867251184_crop-proj")
-# noise.add_noise()
+noise = noise.NoiseModel(config=config.SystemConfig.HOLOGIC, 
+                        input_folder="raytracing/proj/noise_1867251184_crop-proj",
+                        output_folder="noise/proj/noise_1867251184_crop-proj")
+noise.add_noise()
 
 
 fbp = fbp.FilteredBackProjection(input_folder="noise/proj/noise_1867251184_crop-proj-60mAs-rlz1", 
