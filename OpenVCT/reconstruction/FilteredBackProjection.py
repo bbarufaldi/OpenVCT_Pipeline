@@ -70,6 +70,20 @@ class FilteredBackProjection:
         projection_fft = cp.fft.rfft(projection, axis=-1)
         projection_filtered = cp.fft.irfft(projection_fft * self.filter, axis=-1)
         return projection_filtered
+    
+    def fdk_weight(self, projection, dso, dsd, offset_s, offset_t):
+        """
+        Apply Feldkamp-Davis-Kress (FDK) weighting to the projection data.
+        """
+        ns, nt = projection.shape
+        ss = cp.arange(ns) - (ns / 2.0) + offset_s
+        tt = cp.arange(nt) - (nt / 2.0) + offset_t
+        ss, tt = cp.meshgrid(ss, tt)
+        ss = ss.astype(cp.float32)
+        tt = tt.astype(cp.float32)
+
+        ww = (dso / cp.sqrt(dsd**2 + ss**2 + tt**2)).astype(cp.float32)
+        projection *= ww
 
     def back_project(self):
         """
@@ -84,7 +98,10 @@ class FilteredBackProjection:
             
             acquisition = self.acquisition_geometry['Acquisitions']['ID'== i]
             projection = self.projections[i]
-            
+
+            # Apply the FDK weighting
+            #self.fdk_weight(projection, dso, dsd, acquisition['offset_s'], acquisition['offset_t'])
+
             # Apply the filter to the projection
             #filtered_projection = self._apply_filter(projection)
             filtered_projection = projection

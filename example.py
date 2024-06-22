@@ -15,6 +15,7 @@ import os
 import pathlib
 import numpy as np
 import OpenVCT.reconstruction.FilteredBackProjection as fbp
+import OpenVCT.reconstruction.ConeBeamCTBackProjection as cbp
 
 os.chdir('./OpenVCT/raytracing') #change pwd
 writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 
@@ -26,17 +27,25 @@ subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_186
 
 
 os.chdir('../') #change pwd
+
 noise = noise.NoiseModel(config=config.SystemConfig.HOLOGIC, 
                         input_folder="raytracing/proj/noise_1867251184_crop-proj",
                         output_folder="noise/proj/noise_1867251184_crop-proj")
 noise.add_noise()
 
 
-fbp = fbp.FilteredBackProjection(input_folder="noise/proj/noise_1867251184_crop-proj-60mAs-rlz1", 
-                                 output_folder="reconstruction/rec/noise_1867251184_crop-proj-60mAs-rlz1", 
-                                 size=[2048, 1664],
-                                 pixel_size=0.1, slice_thickness=1.0, object_thickness=36.9,
-                                 acquisition_geometry=config.SystemConfig.HOLOGIC["Acquisition_Geometry"])
+# fbp = fbp.FilteredBackProjection(input_folder="noise/proj/noise_1867251184_crop-proj-60mAs-rlz1", 
+#                                  output_folder="reconstruction/rec/noise_1867251184_crop-proj-60mAs-rlz1", 
+#                                  size=[2048, 1664],
+#                                  pixel_size=0.1, slice_thickness=1.0, object_thickness=36.9,
+#                                  acquisition_geometry=config.SystemConfig.HOLOGIC["Acquisition_Geometry"])
 
-fbp.back_project()
-fbp.write_slices()
+# fbp.back_project()
+# fbp.write_slices()
+
+# cbp = cbp.ConeBeamCTBackProjection(input_folder="noise/proj/noise_1867251184_crop-proj-60mAs-rlz1", 
+#                                    output_folder="reconstruction/rec/noise_1867251184_crop-proj-60mAs-rlz1", 
+#                                    size=[2048, 1664],
+#                                    acquisition_geometry=config.SystemConfig.HOLOGIC["Acquisition_Geometry"])
+# cbp.cbct_back_projection()
+# cbp.write_slices()
