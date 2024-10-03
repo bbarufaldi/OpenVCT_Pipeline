@@ -44,7 +44,7 @@ class ZipArchiveEntry
      */
     enum class Attributes : uint32_t
     {
-      AttNone = 0, //None = 0,
+      None = 0,
       ReadOnly = 1,
       Hidden = 2,
       System = 4,
@@ -306,7 +306,7 @@ class ZipArchiveEntry
 
     enum class BitFlag : uint16_t
     {
-      BitNone = 0, //None = 0,
+      None = 0,
       Encrypted = 1,
       DataDescriptor = 8,
       UnicodeFileName = 0x800
@@ -334,8 +334,8 @@ class ZipArchiveEntry
     uint16_t GetVersionMadeBy() const;
     void SetVersionMadeBy(uint16_t value);
 
-    int32_t GetOffsetOfLocalHeader() const;
-    void SetOffsetOfLocalHeader(int32_t value);
+    uint32_t GetOffsetOfLocalHeader() const; // [Cecil] int32_t -> uint32_t
+    void SetOffsetOfLocalHeader(uint32_t value); // [Cecil] int32_t -> uint32_t
 
     bool HasCompressionStream() const;
 

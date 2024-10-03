@@ -12,8 +12,10 @@ import helpers.VctToolkit.Constants as config
 import subprocess
 import OpenVCT.noise.NoiseModel as noise
 import os
-import OpenVCT.reconstruction.FilteredBackProjection as fbp
-import OpenVCT.reconstruction.ConeBeamCTBackProjection as cbp
+#import OpenVCT.reconstruction.FilteredBackProjection as fbp
+#import OpenVCT.reconstruction.ConeBeamCTBackProjection as cbp
+
+os.chdir('./OpenVCT/anatomy') #change pwd
 
 os.chdir('./OpenVCT/raytracing') #change pwd
 writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 

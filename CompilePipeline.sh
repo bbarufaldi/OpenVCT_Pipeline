@@ -1,6 +1,2 @@
-# echo "Testing OpenCL..."
-# gcc host.c -o host -I./usr/include ../usr/lib/x86_64-linux-gnu/libOpenCL.so
-# ./host
-
-echo "Compiling RayTracing..."
-make -f OpenVCT/raytracing/Makefile
+echo "Compiling Breast Anatomy..."
+make -f OpenVCT/anatomy/Makefile
