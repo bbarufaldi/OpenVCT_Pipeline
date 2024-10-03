@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<Breast_Phantom_Designer>
+  <Subject>
+    <Subject_UID>000.685169686552.20171031174553593</Subject_UID>
+    <Subject_Type>Anthropomorphic</Subject_Type>
+    <Gender>Female</Gender>
+    <Pediatric>false</Pediatric>
+    <Age>47</Age>
+    <Date_Of_Birth>1970-01-02</Date_Of_Birth>
+    <Race>null</Race>
+    <Ethnicity>White</Ethnicity>
+    <Weight>60.0</Weight>
+    <Height>1.65</Height>
+    <BMI>22.03856749311295</BMI>
+  </Subject>
+  <Phantom>
+    <Phantom_UID>001.685169686552.20171031174553593</Phantom_UID>
+    <Phantom_Source>University of Pennsylvania</Phantom_Source>
+    <Phantom_Type>Voxel Array</Phantom_Type>
+    <Data_Model>Indexed</Data_Model>
+    <Body_Part>Breast</Body_Part>
+    <Laterality>Left</Laterality>
+    <Volume>700</Volume>
+  </Phantom>
+  <Index_Table_UID>006.685169686552.20171031174553693</Index_Table_UID>
+  <Voxel_Array_UID>007.685169686552.20171031174553763</Voxel_Array_UID>
+  <Leave_In_Temp_Folder>false</Leave_In_Temp_Folder>
+  <Generator_Config>
+    <ProgramName>BreastPhantomGenerator</ProgramName>
+    <XPLPhantom_UID>888076.0.685169686552.20171031174553593</XPLPhantom_UID>
+    <Phantom_Name>test</Phantom_Name>
+    <Phantom_Filename>test.vctx</Phantom_Filename>
+	<Phantom_Shape>Anthropomorphic</Phantom_Shape>
+    <Max_Ligament_Thickness>0.1</Max_Ligament_Thickness>  
+    <Min_Ligament_Thickness>0.1</Min_Ligament_Thickness>
+    <Voxel_Size>0.1</Voxel_Size>
+    <Size_X>6.270616636</Size_X>
+    <Size_Y>6.270616636</Size_Y>
+    <Size_CPrime>10.72938336</Size_CPrime>
+    <Size_CSecondary>6.270616636</Size_CSecondary>
+    <Random_Seed>473</Random_Seed>
+    <Percent_Dense>25</Percent_Dense>
+    <Skin_Thickness>0.15</Skin_Thickness>
+    <Ki>282</Ki>
+    <Kp>48</Kp>
+    <Ks>91</Ks>
+    <Num_Compartments>421</Num_Compartments>
+    <Compartment_Thickness>0.04</Compartment_Thickness>
+    <Min_Seed_Distance>0.15</Min_Seed_Distance>
+    <Minimum_Speed>0.01</Minimum_Speed>
+    <Maximum_Speed>1.0</Maximum_Speed>
+    <Minimum_Ratio>1.0</Minimum_Ratio>
+    <Maximum_Ratio>4.0</Maximum_Ratio>
+    <Beta_p1>2.0</Beta_p1>
+    <Beta_p2>2.0</Beta_p2>
+    <Beta_q1>0.5</Beta_q1>
+    <Beta_q2>3.5</Beta_q2>
+  </Generator_Config>
+</Breast_Phantom_Designer>

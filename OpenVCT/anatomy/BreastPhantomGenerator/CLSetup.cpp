@@ -57,80 +57,66 @@ bool BreastPhantomGenerator::SetupCLForVoxelParallelization(int clDistributionCo
 
     try
     {
+
+        cl::Context      context;
+        cl::CommandQueue clCommandQueue;
+        cl::Kernel       traceKernel, physicsKernel;
+        cl::Device       dev;
+        cl::Platform platform;
+        
+        // Get all available platforms
+        std::vector<cl::Platform> platforms;
+        cl::Platform::get(&platforms);
+
+        if (platforms.empty()) {
+            std::cout << "Error: No platforms found!" << std::endl;
+            return -1;
+        }
+
+        // Iterate through platforms and list devices
+        for (size_t i = 0; i < platforms.size(); ++i) {
+            platform = platforms[i];
+
+            // Get platform info
+            std::string platform_name = platform.getInfo<CL_PLATFORM_NAME>();
+            std::string platform_version = platform.getInfo<CL_PLATFORM_VERSION>();
+            std::string platform_vendor = platform.getInfo<CL_PLATFORM_VENDOR>();
+            std::cout << "Platform " << i + 1 << ": " << platform_name << "\n";
+            std::cout << "  Vendor: " << platform_vendor << "\n";
+            std::cout << "  Version: " << platform_version << "\n";
+
+            // Get all devices on this platform
+            std::vector<cl::Device> devices;
+            platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+
+            if (devices.empty()) {
+                std::cout << "  Error: No devices found for this platform!" << std::endl;
+                continue;
+            }
+
+            // Print device details
+            for (size_t j = 0; j < devices.size(); ++j) {
+                cl::Device device = devices[j];
+                std::string device_name = device.getInfo<CL_DEVICE_NAME>();
+                cl_device_type device_type = device.getInfo<CL_DEVICE_TYPE>();
+
+                std::cout << "  Device " << j + 1 << ": " << device_name << "\n";
+                
+                // Identify device type
+                if (device_type == CL_DEVICE_TYPE_CPU) {
+                    std::cout << "    Type: CPU\n";
+                } else if (device_type == CL_DEVICE_TYPE_GPU) {
+                    std::cout << "    Type: GPU\n";
+                } else if (device_type == CL_DEVICE_TYPE_ACCELERATOR) {
+                    std::cout << "    Type: Accelerator\n";
+                } else {
+                    std::cout << "    Type: Other/Unknown\n";
+                }
+            }
+        }
+
         if (!this->context())
         {
-            std::vector<cl::Platform> platforms;
-            cl::Platform::get(&platforms); // Crashing here on linux -1001
-            cl::Platform platform;
-            cl::Device dev;
-
-            for (int i=0; i<platforms.size(); i++)
-            {
-                platforms[i].getDevices(CL_DEVICE_TYPE_ALL, &devices);
-                
-                for (int d=0; d<devices.size(); d++)
-                {                   
-                    if (devices[d].getInfo<CL_DEVICE_TYPE>() == CL_DEVICE_TYPE_GPU)
-                    {
-                        
-                        platform = platforms[i];
-                        dev = devices[d]; 
-                        
-                        #if defined(_MSC_VER)
-                        
-                            context = cl::Context(devices[d]);
-                        
-                        #else // linux
-                        
-                            try
-                            {
-                                context = cl::Context(devices[d]);
-                            }
-                            catch(cl::Error err) 
-                            {
-                                std::cerr << __FUNCTION__ << ": OpenCL function " << err.what() << ", error code " 
-                                          << err.err() << ", \"" << clib.getErrorString(err.err()) << "\"" 
-                                          << std::endl;
-                                throw; // jump to outer catch block since we cannot run
-                            }                        
-                        #endif
-                        
-                        break;
-                    }
-                }
-
-                if (context())  break;
-            }
-            
-            if (nullptr == context())
-            {
-                std::cout << "A valid GPU device is not found, failing back to CPU." << std::endl;
-                for (int i=0; i<platforms.size(); i++)
-                {
-                    platforms[i].getDevices(CL_DEVICE_TYPE_ALL, &devices);
-                    for (int d=0; d<devices.size(); d++)
-                    {                   
-                        if (devices[d].getInfo<CL_DEVICE_TYPE>() == CL_DEVICE_TYPE_CPU)
-                        {
-                            dev = devices[d];
-                            context = cl::Context(devices[d]);
-                            break;
-                        }
-                    }
-                    if (context())  break;
-                }
-                
-            }
-            #define DUMP_PLATFORM_AND_DEVICE_INFO
-            #if defined(DUMP_PLATFORM_AND_DEVICE_INFO)    
-                std::string platform_name = platform.getInfo<CL_PLATFORM_NAME>();
-                std::string platform_version = platform.getInfo<CL_PLATFORM_VERSION>();
-                std::string platform_vendor = platform.getInfo<CL_PLATFORM_VENDOR>();
-                std::cout << "Using device:   " << dev.getInfo<CL_DEVICE_NAME>() << "\n";
-                std::cout << "Using platform: " << platform_name << ", version: "
-                          << platform_version << ", vendor: " << platform_vendor << "\n"
-                          << std::endl;
-            #endif
               
             cl_int err = 0;
             clCommandQueue = cl::CommandQueue(context, dev, 0, &err);           

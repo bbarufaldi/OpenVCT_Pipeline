@@ -12,26 +12,25 @@ import helpers.VctToolkit.Constants as config
 import subprocess
 import OpenVCT.noise.NoiseModel as noise
 import os
-#import OpenVCT.reconstruction.FilteredBackProjection as fbp
-#import OpenVCT.reconstruction.ConeBeamCTBackProjection as cbp
 
 os.chdir('./OpenVCT/anatomy') #change pwd
+subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", "./xml/phantom.xml"])
 
-os.chdir('./OpenVCT/raytracing') #change pwd
-writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 
-                                 phantom_name="vctx/noise_1867251184_crop.vctx", 
-                                 folder_name="proj/noise_1867251184_crop-proj")
+# os.chdir('./OpenVCT/raytracing') #change pwd
+# writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 
+#                                  phantom_name="vctx/noise_1867251184_crop.vctx", 
+#                                  folder_name="proj/noise_1867251184_crop-proj")
 
-writeProjXML.write_xml("./xml/noise_1867251184.xml")
-subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_1867251184.xml"])
+# writeProjXML.write_xml("./xml/noise_1867251184.xml")
+# subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_1867251184.xml"])
 
 
-os.chdir('../') #change pwd
+# os.chdir('../') #change pwd
 
-noise = noise.NoiseModel(config=config.SystemConfig.HOLOGIC, 
-                        input_folder="raytracing/proj/noise_1867251184_crop-proj",
-                        output_folder="noise/proj/noise_1867251184_crop-proj")
-noise.add_noise()
+# noise = noise.NoiseModel(config=config.SystemConfig.HOLOGIC, 
+#                         input_folder="raytracing/proj/noise_1867251184_crop-proj",
+#                         output_folder="noise/proj/noise_1867251184_crop-proj")
+# noise.add_noise()
 
 
 # fbp = fbp.FilteredBackProjection(input_folder="noise/proj/noise_1867251184_crop-proj-60mAs-rlz1", 

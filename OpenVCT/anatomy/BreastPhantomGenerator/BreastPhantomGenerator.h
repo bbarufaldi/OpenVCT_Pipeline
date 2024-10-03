@@ -17,8 +17,8 @@
 #include <OpenCL/cl2.hpp>
 #else
 #if defined __has_include
-   #if __has_include (<CL/cl2.hpp>)
-      #include <CL/cl2.hpp>
+   #if __has_include (<CL/opencl.hpp>)
+      #include <CL/opencl.hpp>
    #else
       #define USING_CL_HPP
       #define __CL_ENABLE_EXCEPTIONS

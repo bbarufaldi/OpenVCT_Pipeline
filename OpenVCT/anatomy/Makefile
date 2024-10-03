@@ -17,7 +17,6 @@ LIBDIR = -L$(VCTDIR)/ZipLib/bin/x64/Release
 LIBS   = -lziplib -llzma -lbzip2 -lzlib -pthread
 OCLDIR = usr/lib/x86_64-linux-gnu
 OCLLIB = OpenCL
-#GLLIBS = -lX11 -lGLX -lGLEW -lGL
 
 DEPS := $(wildcard $(SRCDIR)/*.h $(SRCDIR)/*.hpp)	 
 SOURCES := $(wildcard $(SRCDIR)/*.cpp)
