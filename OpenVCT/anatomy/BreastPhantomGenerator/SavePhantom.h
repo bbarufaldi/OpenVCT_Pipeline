@@ -110,6 +110,8 @@ public: // for now, until accessors can be created
     std::string phantom_output_path;
     std::string phantom_filename;
     std::string phantom_shape;
+	float       max_ligament_thickness;  // New field as of 2021-01-13
+	float       min_ligament_thickness;  // New field as of 2021-01-13
     float       voxel_size;
     float       a;  // x
     float       b;  // y

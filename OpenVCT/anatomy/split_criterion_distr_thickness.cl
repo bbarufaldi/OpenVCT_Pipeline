@@ -7,7 +7,7 @@
 // - PreTransform
 // - distr_max_box7_imp                         compute the distance of voxel to a shape
 // - distr_max_box7                             __kernel routine
-// - voxel_contains_boundary_thickness_nostr1   compute the closest shapes to a voxel 
+// - voxel_contains_boundary_thickness_nostr1   compute the closest shapes to a voxel
 // - MyRound(float r)
 // - split_criterion_distr_thickness_nostr1     __kernel routine
 // - GetMemoryCountForNextLevel                 __kernel routine: sum distr cnt, # of nodes to be split per workgroup
@@ -49,8 +49,8 @@ void mask_check(float xLow, float xhigh,
         optim = 2;
         v = max(fabs(ylow), fabs(yhigh));
         *maximal_value = xhigh*xhigh*invasquared + v*v*invbsquared + zhigh*zhigh*invcprimsquared; // 11/23/2010
-    } 
-    
+    }
+
     v = max(fabs(ylow), fabs(yhigh));
 
     if (zhigh > 0)
@@ -76,7 +76,7 @@ void mask_check(float xLow, float xhigh,
 
     if (optim == 2)
     {
-        tangent = 0; 
+        tangent = 0;
         if (0 >= ylow  && 0 <= yhigh)
         {
             tempmin = min(tempmin, xLow*xLow*invasquared);
@@ -141,23 +141,23 @@ public:
 
 
 void PostTransform(float4 v, float16 T,float4 *r)
-{ 
+{
     (*r) = (float4) (dot(T.s0123, v), dot(T.s4567, v), dot(T.s89ab, v), 0.0f);
 }
 
 void PreTransform(float16 T, float4 v, float4 *r)
-{ 
+{
     (*r) = (float4) (dot(T.s048c, v),  dot(T.s159d, v), dot(T.s26ae, v), 0.0f);
 }
 
 
 // ( Local ) Routine to compute the distance of voxel to a shape
-void distr_max_box7_imp(const float4 localmu,  
-                        float16 localR, 
-                        const float logSqrtDetSigmalogprior, 
-                        const float4 bb, 
-                        const float16 A1inv, 
-                        const float16 A2inv, 
+void distr_max_box7_imp(const float4 localmu,
+                        float16 localR,
+                        const float logSqrtDetSigmalogprior,
+                        const float4 bb,
+                        const float16 A1inv,
+                        const float16 A2inv,
                         const float16 A3inv,
                         const float2 x,
                         const float2 y,
@@ -166,7 +166,7 @@ void distr_max_box7_imp(const float4 localmu,
                         const float8 localU1,
                         const float8 localU2,
                         const float8 localU3,
-                        float deltaX, 
+                        float deltaX,
                         const float4 xc,
                         float *int_min,
                         float *int_max)
@@ -174,7 +174,7 @@ void distr_max_box7_imp(const float4 localmu,
     float4 xcmu = xc - localmu;
     float4 xR;
 
-    PostTransform(xcmu, localR, &xR); 
+    PostTransform(xcmu, localR, &xR);
 
     float fc = -0.5f * dot(xR, xR) + logSqrtDetSigmalogprior;
     float8 boundary_values;
@@ -194,7 +194,7 @@ void distr_max_box7_imp(const float4 localmu,
     bmin = boundary_values.s0;
     bmin = min(bmin, boundary_values.s1);
     bmin = min(bmin, boundary_values.s2);
-    bmin = min(bmin, boundary_values.s3); 
+    bmin = min(bmin, boundary_values.s3);
     bmin = min(bmin, boundary_values.s4);
     bmin = min(bmin, boundary_values.s5);
     bmin = min(bmin, boundary_values.s6);
@@ -230,8 +230,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.z >= z.x) && (xx.z <= z.y))
         {
             xx = xx - localmu;
-            PostTransform(xx, localR,&xR); 
-            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;      
+            PostTransform(xx, localR,&xR);
+            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -243,8 +243,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.z >= z.x) && (xx.z <= z.y))
         {
             xx = xx - localmu;
-            PostTransform( xx, localR,&xR); 
-            fc = -0.5f * dot(xR, xR) + logSqrtDetSigmalogprior;     
+            PostTransform( xx, localR,&xR);
+            fc = -0.5f * dot(xR, xR) + logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -257,8 +257,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.z >= z.x) && (xx.z <= z.y))
         {
             xx = xx - localmu;
-            PostTransform( xx, localR,&xR);  
-            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;      
+            PostTransform( xx, localR,&xR);
+            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -269,8 +269,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.z >= z.x) && (xx.z <= z.y))
         {
             xx = xx - localmu;
-            PostTransform(xx, localR, &xR); 
-            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;      
+            PostTransform(xx, localR, &xR);
+            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -283,8 +283,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.y >= y.x) && (xx.y <= y.y))
         {
             xx = xx - localmu;
-            PostTransform( xx, localR,&xR); 
-            fc = -0.5f * dot(xR, xR) + logSqrtDetSigmalogprior;     
+            PostTransform( xx, localR,&xR);
+            fc = -0.5f * dot(xR, xR) + logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -296,8 +296,8 @@ void distr_max_box7_imp(const float4 localmu,
             (xx.y >= y.x) && (xx.y <= y.y))
         {
             xx = xx - localmu;
-            PostTransform(xx, localR, &xR); 
-            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;      
+            PostTransform(xx, localR, &xR);
+            fc = -0.5f * dot(xR, xR)+ logSqrtDetSigmalogprior;
             localmax = max(localmax, fc);
         }
 
@@ -313,7 +313,7 @@ void distr_max_box7_imp(const float4 localmu,
 __kernel  void distr_max_box7(__global const float2 *x,                      //  0
                               __global const float2 *y,                      //  1
                               __global const float2 *z,                      //  2
-                              __global const int* nodeMap,                   //  3                     
+                              __global const int* nodeMap,                   //  3
                               __global const short* shape,                   //  4
                               __global const float4 *mu,                     //  5
                               __global const float16 *R,                     //  6
@@ -335,17 +335,17 @@ __kernel  void distr_max_box7(__global const float2 *x,                      // 
     {
         return;
     }
-    
+
     short i = shape[index];
 
     int node = nodeMap[index];
 
     float4 xc = (float4)(0.5f*(x[node].s0+x[node].s1), 0.5f*(y[node].s0+y[node].s1), 0.5f*(z[node].s0+z[node].s1), 0.0f);
-    float max, min; 
+    float max, min;
     distr_max_box7_imp(mu[i],R[i],
                        logSqrtDetSigmalogprior[i],bb[i],
                        A1inv[i],A2inv[i],A3inv[i],
-                       x[node], y[node], z[node], H[i],U1[i], U2[i], U3[i], deltaX, xc, 
+                       x[node], y[node], z[node], H[i],U1[i], U2[i], U3[i], deltaX, xc,
                        &min, &max);
 
     answer[index].s0 = min;
@@ -416,19 +416,19 @@ int FindLigamentType(int distLabel_1, int distLabel_2)
 // Inlined routine to compute the closest shapes to a voxel
 void voxel_contains_boundary_thickness_nostr1(float2 x,
                                               float2 y,
-                                              float2 z, 
+                                              float2 z,
                                               float Dmin,
                                               __global short* distribution,
-                                              __global short* clDistributionCount, 
-                                              __global const float4 *mu,  
-                                              __global const float16 *R, 
-                                              __global const float *logSqrtDetSigmalogprior, 
-                                              __global const float4 *bb, 
+                                              __global short* clDistributionCount,
+                                              __global const float4 *mu,
+                                              __global const float16 *R,
+                                              __global const float *logSqrtDetSigmalogprior,
+                                              __global const float4 *bb,
                                               __global const float16 *distributionInvSigma,
                                               __global const char *distributionLabel,
-                                              float deltaX, 
+                                              float deltaX,
                                               float voxelHalfSize, // arg #14
-                                              char* yes_no, 
+                                              char* yes_no,
                                               char* label,
                                               __global const float2 *distance)
 {
@@ -443,7 +443,7 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
     {
         *yes_no=0;
         *clDistributionCount = 1;
-        *label=distributionLabel[distribution[0]]; // 1/13/2011, instead of assigning the label to be 
+        *label=distributionLabel[distribution[0]]; // 1/13/2011, instead of assigning the label to be
         return;
     }
 
@@ -500,13 +500,13 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
 
         float4 GradXc= transformedResult+bb[f1_distribution]-bb[f2_distribution];
         float normGradXc2 = length(GradXc); // Euclid norm of the gradient // for some reason, norm did not work!!! (because its OpenCL?)
-        
+
         if (f2_distribution == f1_distribution) // It will happen if the caller did not use the yes_no returned to its voxel/node splitting parent.
         {
             *yes_no = 0;
             *clDistributionCount = 1;
             distribution[0] = f1_distribution;
-            *label=distributionLabel[f1_distribution]; // assigning 
+            *label=distributionLabel[f1_distribution]; // assigning
         }
         else
         {
@@ -514,16 +514,16 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
             float4 xcmu2 = xc - mu[f2_distribution];
             float4 transformed_xcmu1, transformed_xcmu2;
             float16 Rf1 = R[f1_distribution], Rf2 = R[f2_distribution];
-            
+
             PostTransform(xcmu1, Rf1, &(transformed_xcmu1));
             PostTransform(xcmu2, Rf2, &(transformed_xcmu2));
 
-            float Fc=fabs(( -0.5f*dot(transformed_xcmu1, transformed_xcmu1) +logSqrtDetSigmalogprior[f1_distribution]) + 
+            float Fc=fabs(( -0.5f*dot(transformed_xcmu1, transformed_xcmu1) +logSqrtDetSigmalogprior[f1_distribution]) +
                    ( +0.5f*dot(transformed_xcmu2, transformed_xcmu2)-logSqrtDetSigmalogprior[f2_distribution]));
 
             float normGradXc1 = fabs(GradXc.s0)+fabs(GradXc.s1)+fabs(GradXc.s2);
             float center_dist = Fc/normGradXc2;
-            float correction = voxelHalfSize*(normGradXc1/normGradXc2);    
+            float correction = voxelHalfSize*(normGradXc1/normGradXc2);
 
             float corr_center_dist = center_dist + correction;
             if ( (corr_center_dist < voxelsizeToCompare) && (corr_center_dist >= 0.0f) )
@@ -533,16 +533,16 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
                 // Determine Ligament Type
                 *label = FindLigamentType(distributionLabel[f1_distribution],
                                           distributionLabel[f2_distribution]);
-                
+
                 if (Dmin == 0.0f)
                 {
                     *label = distributionLabel[f1_distribution]; // 2019-05-02 ESSENTIAL! KEEP!!
                     if (distributionLabel[f1_distribution] == 1)
-                    {   
+                    {
                         if (distributionLabel[f2_distribution] > 2) *label = distributionLabel[f2_distribution];
                     }
                 }
-                
+
                 if (Dmin > voxelHalfSize * 2.0f) // never true when Dmin is zero; therefore, split will occur
                 {
                     *yes_no=0;
@@ -560,7 +560,7 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
                 if (center_dist-correction>=voxelsizeToCompare)
                 {
                     *yes_no=0;
-                    
+
                     // Corresponding distribution should be the one determined by i_max1
                     distribution[0] = distribution[i_max1];
                     *clDistributionCount = 1;
@@ -571,7 +571,7 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
                     // However, the corresponding distributions should be those
                     // corresponding to i_max1 and correctly computed i_max2
                     *label = 1; // cooper's ligament index
-                    if (true || Dmin == 0.0f) // This is essential for variable-thickness coopers ligaments 
+                    if (true || Dmin == 0.0f) // This is essential for variable-thickness coopers ligaments
                     {
                         *label = distributionLabel[f1_distribution]; // 2019-05-02 ESSENTIAL! KEEP!! //??*$*$*
                         if (distributionLabel[f1_distribution] == 1)
@@ -579,9 +579,9 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
                             if (distributionLabel[f2_distribution] > 2) *label = distributionLabel[f2_distribution];
                         }
                     }
-                                              
+
                     *yes_no = 1; // further split will occur (if not too deep)
-                    
+
                     distribution[0] = f1_distribution;
                     distribution[1] = f2_distribution;
                     *clDistributionCount = 2;
@@ -593,11 +593,11 @@ void voxel_contains_boundary_thickness_nostr1(float2 x,
     {
         *yes_no = 1;
         *label = 1;  // this is cooper's ligament label as skin always
-        
+
         // Determine Ligament Type
         *label = FindLigamentType(distributionLabel[distribution[i_max1]],
                                   distributionLabel[distribution[0]]);
-        
+
         if (Dmin == 0.0f)
         {
             *label = distributionLabel[distribution[i_max1]]; // 2019-05-02
@@ -661,72 +661,86 @@ float FindLigThickness(const float max_thickness,
                        const float2 z_bound,            // ~z coord of vertex
                        const __global float2 *Xextents, // X phantom min & max
                        const __global float2 *Yextents, // Y phantom min & max
-                       const __global float2 *Zextents) // Z phantom min & max
+                       const __global float2 *Zextents, // Z phantom min & max
+                       const uint phantom_shape)        // 0=Breast, 1=Cube
 {
     float thickness = min_thickness;
-    
+
     float xpos = (x_bound.s0 + x_bound.s1) * 0.5f;
     float xmin = Xextents[0].s0;
     float xmax = Xextents[0].s1;
     float xsiz = xmax - xmin;
-    
+
     float ypos = (y_bound.s0 + y_bound.s1) * 0.5f;
     float ymin = Yextents[0].s0;
     float ymax = Yextents[0].s1;
-    
+
     float zpos = (z_bound.s0 + z_bound.s1) * 0.5f;
     float zmin = Zextents[0].s0;
     float zmax = Zextents[0].s1;
-    
-    // Ellipse Cross-section Based on Radius -----------------------------------
-    
-    if (xpos > 0.0f) // test proximity to chest wall along X (empirical threshold)
+
+
+    if (true || phantom_shape == 0) // Breast
     {
-        if (fabs(ypos) < ymax) // test lateral proximity (empirical threshold)
+        // Ellipse Cross-section Based on Radius -----------------------------------
+
+        if (xpos > 0.0f) // test proximity to chest wall along X (empirical threshold)
         {
-            if (zpos >= 0.0f) // is vertex in upper ellipsoid
+            if (fabs(ypos) < ymax) // test lateral proximity (empirical threshold)
             {
-                if (true || ((zmax - zpos) > (zmax * 0.5f ))) // define top threshold (empirical threshold)
-                {                    
-                    // Algorithms #3 & #4 ("Sweet Spot" center of crosssection)
-                    float xy_distance = sqrt(xpos*xpos + ypos*ypos);
-                    float radius = FindRadius(xmax, zmax, zpos);
-                    if (radius != 0.0f)
+                if (zpos >= 0.0f) // is vertex in upper ellipsoid
+                {
+                    if (true || ((zmax - zpos) > (zmax * 0.5f ))) // define top threshold (empirical threshold)
                     {
-                        // Algorithm #4 sweet spot at chest wall
-                        thickness = FindDThick(max_thickness, min_thickness,
-                                               radius, xpos, ypos, zpos);
+                        // Algorithms #3 & #4 ("Sweet Spot" center of crosssection)
+                        float xy_distance = sqrt(xpos*xpos + ypos*ypos);
+                        float radius = FindRadius(xmax, zmax, zpos);
+                        if (radius != 0.0f)
+                        {
+                            // Algorithm #4 sweet spot at chest wall
+                            thickness = FindDThick(max_thickness, min_thickness,
+                                                   radius, xpos, ypos, zpos);
+                        }
                     }
                 }
-            }
-            else // vertex occurs in lower ellipsoid
-            {
-                if (true || (zpos > (zmin * 0.5f))) // define bottom threshold
-                {                       
-                    // Algorithms #3 & #4 ("Sweet Spot" center of crosssection)
-                    float xy_distance = sqrt(xpos*xpos + ypos*ypos);
-                    float radius = FindRadius(xmax, fabs(zmin), fabs(zpos));
-                    
-                    if (radius != 0.0f)
+                else // vertex occurs in lower ellipsoid
+                {
+                    if (true || (zpos > (zmin * 0.5f))) // define bottom threshold
                     {
-                        // Algorithm #4 sweet spot at chest wall
-                        thickness = FindDThick(max_thickness, min_thickness,
-                                               radius, xpos, ypos, zpos);
- 
+                        // Algorithms #3 & #4 ("Sweet Spot" center of crosssection)
+                        float xy_distance = sqrt(xpos*xpos + ypos*ypos);
+                        float radius = FindRadius(xmax, fabs(zmin), fabs(zpos));
+
+                        if (radius != 0.0f)
+                        {
+                            // Algorithm #4 sweet spot at chest wall
+                            thickness = FindDThick(max_thickness, min_thickness,
+                                                   radius, xpos, ypos, zpos);
+
+                        }
                     }
                 }
+
+                if (thickness < min_thickness) thickness = min_thickness;
             }
-            
-            if (thickness < min_thickness) thickness = min_thickness;
         }
     }
-   
-    
+    else if (phantom_shape == 1) // Cube
+    {
+        float dx = fabs(xmax/xpos);
+        float dy = fabs(ymax/ypos);
+        float dz = 0.0f;
+        if (zpos != 0.0f) dz = fabs((zpos<0.0f)?(zmin/zpos):(zmax/zpos));
+        float dthick = max_thickness - min_thickness;
+        thickness = min_thickness + (dthick * ((dx + dy + dz) / 3.0f));
+    }
+
+
     return thickness;
 }
 
 
-// ( "splitKernel", 5th kernel function invoked ) 
+// ( "splitKernel", 5th kernel function invoked )
 
 __kernel  void split_criterion_distr_thickness(const float4 LOW,                             //  0
                                                const float Dmin,                             //  1
@@ -754,7 +768,7 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
                                                __global short *clDistributionCount,          // 22
                                                __global const float4 *mu,                    // 23
                                                __global const float16 *R,                    // 24
-                                               __global const float *logSqrtDetSigmalogprior,// 25 
+                                               __global const float *logSqrtDetSigmalogprior,// 25
                                                __global const float4 *bb,                    // 26
                                                __global const float16 *distributionInvSigma, // 27
                                                __global const char *distributionLabel,       // 28 labelBuffer (CLSetup.cpp)
@@ -764,45 +778,47 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
                                                const __global float2 *Xextents,              // 32
                                                const __global float2 *Yextents,              // 33
                                                const __global float2 *Zextents,              // 34
-                                               const uint phantom_shape)                     // 35
+                                               const uint phantom_shape,                     // 35
+                                               const float max_ligament_thickness,           // 36  New field as of 2021-01-13
+                                               const float min_ligament_thickness)           // 37  New field as of 2021-01-13
 {
     size_t index = get_global_id(0);
-    
+
     if (index >= currentNodeCount)
     {
         return;
     }
 
-    
+
     float2 x_bound=x[index];
     float2 y_bound=y[index];
     float2 z_bound=z[index];
 
     float2 minimal_value; //0 air. 1 skin
     float2 maximal_value;
-    
+
     float2 INVASQUARED = (float2) (maskAInverseSquared, skinAInverseSquared);
     float2 INVBSQUARED = (float2) (maskBInverseSquared, SkinBInverseSquared);
-    
+
     float2 INVCPRIMSQUARED = (float2) (maskCPrimInverseSquared, skinCPrimInverseSquared);
     float2 INVCSECSQUARED = (float2) (maskCSecInverseSquared, skinCSecInverseSquared);
-    
+
     if (phantom_shape == 1)
     {
-        minimal_value = 0.0f;
-        maximal_value = 1.0f;
+        minimal_value = min_ligament_thickness; // DH 2021-01-13      0.2f;//
+        maximal_value = max_ligament_thickness; // DH 2021-01-13      1.0f;//
     }
     else
     {
         mask_check(x_bound.s0, x_bound.s1,
-                   y_bound.s0, y_bound.s1, 
+                   y_bound.s0, y_bound.s1,
                    z_bound.s0, z_bound.s1,
-                   INVASQUARED, INVBSQUARED, 
+                   INVASQUARED, INVBSQUARED,
                    INVCPRIMSQUARED, INVCSECSQUARED,
                    &minimal_value, &maximal_value);
-    }    
-    
-    //printf("%f %f %f %f %f %f %f %f\n", maskAInverseSquared, skinAInverseSquared, maskBInverseSquared, SkinBInverseSquared, maskCPrimInverseSquared, skinCPrimInverseSquared, maskCSecInverseSquared, skinCSecInverseSquared); 
+    }
+
+    //printf("%f %f %f %f %f %f %f %f\n", maskAInverseSquared, skinAInverseSquared, maskBInverseSquared, SkinBInverseSquared, maskCPrimInverseSquared, skinCPrimInverseSquared, maskCSecInverseSquared, skinCSecInverseSquared);
     //printf("maxair %f  \n",  maximal_value.s0);
     //printf("maxskin %f  \n",  maximal_value.s1);
     //printf("minair %f  \n",  minimal_value.s0);
@@ -817,33 +833,31 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
     // Find Dmin as a function of proximity to skin or chest wall
     float max_Dmin = Dmin;// * 4.0;//1.25f;    // Arbitrary and empirical (by eye)
     float min_Dmin = voxel_halfsize * 0.2f; // Size of a Voxel
-    
+
     //if (Xextents[0].s0 < 0.0) max_Dmin = 0.0f;  //DEBUG: OK
     //if (Xextents[0].s1 < 0.0) max_Dmin = 0.0f;  //DEBUG: OK
     //if (Yextents[0].s1 < 0.0) max_Dmin = 0.0f;  //DEBUG: OK
-    //if (Zextents[0].s1 < 0.0) max_Dmin = 0.0f;  //DEBUG: OK    
+    //if (Zextents[0].s1 < 0.0) max_Dmin = 0.0f;  //DEBUG: OK
     //if (Yextents[0].s0 < 0.0) max_Dmin = 0.0f;  //DEBUG: DEFINITELY ACTIVATED.
-    //if (Zextents[0].s0 < 0.0) max_Dmin = 0.0f;  //DEBUG:  DEFINITELY ACTIVATED.    
+    //if (Zextents[0].s0 < 0.0) max_Dmin = 0.0f;  //DEBUG:  DEFINITELY ACTIVATED.
     //if (fabs(x_bound.s1 - x_bound.s0) > 0.02f) max_Dmin = 0.0f;  //DEBUG: Between 0.0125 and 0.025 (.02 causes striping!)
     //if (fabs(y_bound.s1 - y_bound.s0) > 0.02f) max_Dmin = 0.0f;  //DEBUG: Between 0.0125 and 0.025 (.02 causes striping!)
     //if (fabs(x_bound.s1 - x_bound.s0) > 0.02f) max_Dmin = 0.0f;  //DEBUG: Between 0.0125 and 0.025 (.02 causes striping!)
 
     // Findings:
     // 1. X ranges from 0.0 (chest wall) to max X (nipple) - no negative values
-    // 2. Y ranges from -dimension to +dimension (side to side) 
+    // 2. Y ranges from -dimension to +dimension (side to side)
     // 3. Z ranges from -csec to +cprim, where 0 is where bottom and top ellipsoids meet
-    // 4. On the final iteration, the X, Y, and Z bounds differ by roughly 0.02 mms    
+    // 4. On the final iteration, the X, Y, and Z bounds differ by roughly 0.02 mms
 
-    float ligament_thickness =  FindLigThickness(max_Dmin, min_Dmin, 
+    float ligament_thickness =  FindLigThickness(max_Dmin, min_Dmin,
                                                  x_bound, y_bound, z_bound,
-                                                 Xextents, Yextents, Zextents);
-	
-	ligament_thickness = 0.01f; //HARDCODED!
+                                                 Xextents, Yextents, Zextents, phantom_shape);
 
     voxel_contains_boundary_thickness_nostr1(x_bound, y_bound, z_bound, ligament_thickness,
-                                             &distribution[distributionHead[index]], &clDistributionCount[index], mu, R, 
-                                             logSqrtDetSigmalogprior, bb, distributionInvSigma, distributionLabel, 
-                                             deltaX, voxel_halfsize*2, &yes_no, &label, 
+                                             &distribution[distributionHead[index]], &clDistributionCount[index], mu, R,
+                                             logSqrtDetSigmalogprior, bb, distributionInvSigma, distributionLabel,
+                                             deltaX, voxel_halfsize*2, &yes_no, &label,
                                              distance+distributionHead[index]);  // 12/3/2010
 
     char tosplit;
@@ -852,14 +866,14 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
     if (oldLabel==1) // inherited label from the previous level, 11/25/2010 should save a number of mask evaluations
     {
         tosplit = yes_no; // Can have multiple values {0,1,2}
-        labels[index]=label; 
+        labels[index]=label;
         if (yes_no==0)
         {
             tosplit = 2;
         }
     }
     else if (oldLabel==2)
-    {   
+    {
         // The idea: if it is marked as skin and should be split, then it is
         // either skin or air, but cannot be fat/dense tissue or Coopers ligaments
         if ((maximal_value.s0>1.0f) && (minimal_value.s0<=1.0f))
@@ -884,7 +898,7 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
         {
             tosplit=1;
             labels[index]=4; // label of skin 11/25/2010 INTRODUCED to distinguish other cases when skin is assumed!
-        
+
         }
     }
     else // minimal_value_skin >= 1
@@ -896,7 +910,7 @@ __kernel  void split_criterion_distr_thickness(const float4 LOW,                
             labels[index]=2; // label of skin
             clDistributionCount[index] = 0;
         }
-        else if (maximal_value.s0<1.0) 
+        else if (maximal_value.s0<1.0)
         {
             tosplit = 2;
         }
@@ -921,8 +935,8 @@ __kernel void GetMemoryCountForNextLevel(__global int *totaldistributionCount,  
 {
     int index = get_global_id(0);
     int group = get_group_id(0);
-    __local int ss; 
-    
+    __local int ss;
+
     if (get_local_id(0) == 0)
     {
         localTotaldistributionCount[0] = 0;
@@ -930,10 +944,10 @@ __kernel void GetMemoryCountForNextLevel(__global int *totaldistributionCount,  
         localVoxelizeCount[0] = 0;
         ss = 0;
     }
-    barrier(CLK_LOCAL_MEM_FENCE|CLK_GLOBAL_MEM_FENCE ); 
+    barrier(CLK_LOCAL_MEM_FENCE|CLK_GLOBAL_MEM_FENCE );
     if (nodeCount > index)
     {
-        if ((toSplits[index] == 1) ||(toSplits[index] == 3)) 
+        if ((toSplits[index] == 1) ||(toSplits[index] == 3))
         {
             atomic_add(&ss, 1);
             atomic_add(localTotaldistributionCount, clDistributionCount[index] );
@@ -943,7 +957,7 @@ __kernel void GetMemoryCountForNextLevel(__global int *totaldistributionCount,  
             atomic_inc(localVoxelizeCount);
         }
     }
-    barrier(CLK_LOCAL_MEM_FENCE|CLK_GLOBAL_MEM_FENCE ); 
+    barrier(CLK_LOCAL_MEM_FENCE|CLK_GLOBAL_MEM_FENCE );
     if (get_local_id(0) == 0)
     {
         totaldistributionCount[group] = localTotaldistributionCount[0];
@@ -1002,24 +1016,24 @@ __kernel void CompactNodes( __global const char *toSplits,              //  0
                             __local int *localVoxelizeCount)            // 25
 {
     int index = get_global_id(0);      // node of octree
-    int groupIndex = get_group_id(0);  // workgroup 
+    int groupIndex = get_group_id(0);  // workgroup
     if (get_local_id(0) == 0)          // initialized by the first thread
     {
         localDistributionCount[0] = 0;
         localSplitCount[0] = 0;
         localVoxelizeCount[0] = 0;
     }
-    
-    barrier(CLK_LOCAL_MEM_FENCE);      //wait for everybody 
+
+    barrier(CLK_LOCAL_MEM_FENCE);      //wait for everybody
     if (index < nodeCount)
-    {     
+    {
         if (toSplits[index] & 1) // if value is 1 or 3
         {
             int count = clDistributionCount[index];       //old distribution count
             int head = distributioGroupCount[groupIndex]+ atomic_add(localDistributionCount, count);   //reserve new distribution
             int newIndex = splitGroupCount[groupIndex]+ atomic_inc(localSplitCount);  //
 
-            // Set the coordinates of each child    
+            // Set the coordinates of each child
             NewX[newIndex] = x[index];
             NewY[newIndex] = y[index];
             NewZ[newIndex] = z[index];
@@ -1052,11 +1066,11 @@ __kernel void CompactNodes( __global const char *toSplits,              //  0
 
 uchar GetColor(uchar index)
 {
-    // These were the values in Joe Chui's last-checked-in version                        
+    // These were the values in Joe Chui's last-checked-in version
     // The repetition of (4, 4, 4, 4) is intentional and needs to be retained.         DH 2019-12-11
     // Added 4 new indicies for new ligament types (see FindLigamentType() this file)  DH 2019-12-11
     const uchar colormap[10] = {(uchar) 0,  // [0] Air
-                                (uchar) 1,  // [1] cooper's    
+                                (uchar) 1,  // [1] cooper's
                                 (uchar) 2,  // [2] skin
                                 (uchar) 3,  // [3] adipose
                                 (uchar) 4,  // [4] glandular(uint4) Apparently not used
@@ -1074,13 +1088,13 @@ uchar GetColor(uchar index)
 __kernel void create_voxels_last_level(__global const float2 *x,           // 0 coordinates
                                        __global const float2 *y,           // 1
                                        __global const float2 *z,           // 2
-                                       __global const char *toSplits,      // 3  
+                                       __global const char *toSplits,      // 3
                                        /////__write_only image3d_t voxelValues, // 4
                                        __global uchar *voxelValues,        // 4
-                                       __global const char *labels,        // 5    
+                                       __global const char *labels,        // 5
                                        const float4 LOW,                   // 6 the corner
                                        const int nodeCount,                // 7
-                                       const float4 voxelResolution,       // 8 
+                                       const float4 voxelResolution,       // 8
                                        const int v,                        // 9  voxelDimension (same in x, y, z)
                                        const int4 origin)                  // 10
 {
@@ -1091,24 +1105,24 @@ __kernel void create_voxels_last_level(__global const float2 *x,           // 0 
     {
         float xLow  = x[index].s0;
         float xhigh = x[index].s1;
-        
+
         float ylow  = y[index].s0;
         float yhigh = y[index].s1;
-        
+
         float zlow  = z[index].s0;
         float zhigh = z[index].s1;
-        
+
         short x_index[2] = {MyRound((xLow-LOW.x + voxelResolution.x) / voxelResolution.x), MyRound((xhigh - LOW.x) / voxelResolution.x)};
         short y_index[2] = {MyRound((ylow-LOW.y + voxelResolution.y) / voxelResolution.y), MyRound((yhigh - LOW.y) / voxelResolution.y)};
         short z_index[2] = {MyRound((zlow-LOW.z + voxelResolution.z) / voxelResolution.z), MyRound((zhigh - LOW.z) / voxelResolution.z)};
-        
+
         // 11/25/2010. label, if equal to 4 (corresponding to skin that MAY
         // also contain Cooper ligaments or fat/dense tissue if split
         // further, is changed to 2 since we do not in reality distinguish 2
         // kinds of skin
         char label = labels[index];
         if (label == 4) label = 2; // Skin can be either 2 or 4 up until now
-    
+
         uchar color = 0;
         uint  vndex = 0;
         for(short z = z_index[0]-1; z<=z_index[1]-1; z++)
@@ -1117,7 +1131,7 @@ __kernel void create_voxels_last_level(__global const float2 *x,           // 0 
             {
                 for(short x = x_index[0]-1; x<=x_index[1]-1; x++)
                 {
-                    // DH 2080-08-18: The color is expressed as 4 separate integers (although we use the same value in all 4). 
+                    // DH 2080-08-18: The color is expressed as 4 separate integers (although we use the same value in all 4).
                     // ...write_imagegui() crams those values into a single, unsigned byte
                     ////write_imageui(voxelValues, (unsigned int4) (x,y,z,0)+origin, GetColor(label));
                     // Since the color values are not unique across the int4, we will plop one instance of the value in the 8-bit volume
@@ -1138,7 +1152,7 @@ __kernel void voxelize(__global const float2 *x,            //  0 coordinates
                        __global const float2 *z,            //  2
                        /////__write_only image3d_t voxelValues,  //  3
                        __global uchar *voxelValues,         //  3
-                       __global const char *labels,         //  4    
+                       __global const char *labels,         //  4
                        const float4 LOW,                    //  5 the corner
                        const int nodeCount,                 //  6
                        const float4 voxelResolution,        //  7
@@ -1146,32 +1160,32 @@ __kernel void voxelize(__global const float2 *x,            //  0 coordinates
                        __global long *voxelIndex,           //  9
                        const short mod,                     // 10
                        const int4 origin)                   // 11
-{ 
+{
     int index = get_global_id(0);
-    
-    if (index >= nodeCount) 
+
+    if (index >= nodeCount)
     {
         return;
     }
-    
-    index = voxelIndex[index]; 
+
+    index = voxelIndex[index];
     float xLow  = x[index].s0;
     float xhigh = x[index].s1;
     float ylow  = y[index].s0;
     float yhigh = y[index].s1;
     float zlow  = z[index].s0;
     float zhigh = z[index].s1;
-    
+
     short x_index[2] = {MyRound((xLow - LOW.x + voxelResolution.x) / voxelResolution.x), MyRound((xhigh - LOW.x) / voxelResolution.x)};
     short y_index[2] = {MyRound((ylow - LOW.y + voxelResolution.y) / voxelResolution.y), MyRound((yhigh - LOW.y) / voxelResolution.y)};
     short z_index[2] = {MyRound((zlow - LOW.z + voxelResolution.z) / voxelResolution.z), MyRound((zhigh - LOW.z) / voxelResolution.z)};
-    
+
     // 11/25/2010. label, if equal to 4 (corresponding to skin that MAY
     // also contain Cooper ligaments or fat/dense tissue if split
     // further, is changed to 2 since we do not in reality distinguish 2
     // kinds of skin
     char label = labels[index];
-    
+
     if (label == 4) label=2;
 
     uchar color = 0;
@@ -1182,7 +1196,7 @@ __kernel void voxelize(__global const float2 *x,            //  0 coordinates
         {
             for(short x = x_index[0]-1; x<=x_index[1]-1; x++)
             {
-                // DH 2080-08-18: The color is expressed as 4 separate integers (although we use the same value in all 4). 
+                // DH 2080-08-18: The color is expressed as 4 separate integers (although we use the same value in all 4).
                 // ...write_imagegui() crams those values into a single, unsigned byte
                 ////write_imageui(voxelValues, (unsigned int4) (x,y,z,0)+origin, GetColor(label));
                 // Since the color values are not unique across the int4, we will plop one instance of the value in the 8-bit volume

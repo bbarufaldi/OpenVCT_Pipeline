@@ -80,6 +80,8 @@ int main(int argc, char* argv[])
             std::cout << "            <Phantom_Name>Example</Phantom_Name>\n";
             std::cout << "            <Phantom_Filename>Example_999999.0.123456789012.20200101000000000.vctx</Phantom_Filename>\n";
             std::cout << "            <Phantom_Shape>Breast</Phantom_Shape>\n";
+			std::cout << "            <Max_Ligament_Thickness>2.0</Max_Ligament_Thickness>\n";  // New field as of 2021-01-13
+			std::cout << "            <Min_Ligament_Thickness>0.2</Min_Ligament_Thickness>\n";  // New field as of 2021-01-13
             std::cout << "            <Voxel_Size>0.25</Voxel_Size>\n";
             std::cout << "            <Size_X>6.27</Size_X>\n";
             std::cout << "            <Size_Y>6.27</Size_Y>\n";
@@ -123,7 +125,6 @@ int main(int argc, char* argv[])
         std::cout << "Couldn't allocate memory for SavePhantom instantiation. Fatal error." << std::endl;
         return -1;
     }
-    std::cout << "Memmory allocated!" << std::endl;
         
     unsigned int rand_seed = 0; // this will be accessed externally by recursive_partition_simulator
 
@@ -208,6 +209,8 @@ int main(int argc, char* argv[])
 
     std::string outputFileName("Phantom.vctx"); 
     std::string phantom_shape("Breast");
+	float max_ligament_thickness(1.0f);   // New field as of 2021-01-13
+	float min_ligament_thickness(0.5f);   // New field as of 2021-01-13
 
     sp->a = a;
     bool config_file_read = false;
@@ -250,6 +253,8 @@ int main(int argc, char* argv[])
                     srand(rand_seed);
                     outputFileName = sp->phantom_filename;
                     phantom_shape = sp->phantom_shape;
+					max_ligament_thickness = sp->max_ligament_thickness;  // New field as of 2021-01-13
+					min_ligament_thickness = sp->min_ligament_thickness;  // New field as of 2021-01-13
                     Percentage = sp->perc_dense;
                     d = sp->skin_thickness;
                     number_distributions = sp->num_compartments;
@@ -285,6 +290,8 @@ int main(int argc, char* argv[])
     std::cout << "\nPhantom Parameters:\n\n";
     std::cout << "\tOutput file (phantom): " << outputFileName.c_str() << "\n";
     std::cout << "\tPhantom Shape:         " << phantom_shape << "\n";
+	std::cout << "\tMax ligament thicness: " << max_ligament_thickness << "\n";  // New field as of 2021-01-13
+	std::cout << "\tMin ligament thicness: " << min_ligament_thickness << "\n";  // New field as of 2021-01-13
     std::cout << "\tVoxel size(mm):        " << deltax * 10.0f << " \n"; // deltax is in cm at this point
     std::cout << "\tDimension(mm) in X:    " << a << "\n";
     std::cout << "\tDimension(mm) in Y:    " << b << "\n";
@@ -300,8 +307,8 @@ int main(int argc, char* argv[])
     std::cout << "\tNumber of compartments:     "                     << number_distributions << "\n";
     std::cout << "\tCompartment thickness (mm): "                     << Thickness << "\n";
     std::cout << "\tMinimal distance between seeds (mm): "            << mindistseeds << "\n";
-    std::cout << "\tMinimal speed of growth:    "                       << minspeed << "\n";
-    std::cout << "\tMaximal speed of growth :   "                       << maxspeed << "\n";
+    std::cout << "\tMinimal speed of growth:    "                     << minspeed << "\n";
+    std::cout << "\tMaximal speed of growth :   "                     << maxspeed << "\n";
     std::cout << "\tMinimal ratio of distribution ellipse halfaxis: " << minratio << "\n";
     std::cout << "\tMaximal ratio of distribution ellipse halfaxis: " << maxratio << "\n";
 
@@ -319,6 +326,7 @@ int main(int argc, char* argv[])
 
     sim->setOutputFileName(outputFileName);
     sim->setPhantomShape(phantom_shape);
+	sim->setLigamentThicknesses(max_ligament_thickness, min_ligament_thickness);  // New fields as of 2021-01-13
     
     
     #if defined(STORE_RANDOM)
@@ -341,8 +349,6 @@ int main(int argc, char* argv[])
                                         distributionFileIn, 
                                         distributionFileOut, false);
     
-    std::cout << "Done recursive_partition_simulation " << std::endl;
-
     if (status == false)
     {
         if (sim) delete sim;
@@ -382,9 +388,8 @@ int main(int argc, char* argv[])
                    p1, q1, p2, q2,
                    distributionFileOut, distributionFileIn);
 
-    std::cout << "Before saving" << std::endl;
     sp->save((long long)xsize, (long long) ysize, (long long) zsize, sim->getVoxelPointer());
-    std::cout << "After saving" << std::endl;
+
                                              
     // Report Elapsed Time
     double elapsed_time = double(clib.get_elapsed_time()) * 0.001;

@@ -10,3 +10,4 @@ pathlib
 tqdm
 scipy
 cupy-cuda12x
+pyopencl

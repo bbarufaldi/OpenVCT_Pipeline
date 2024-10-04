@@ -31,9 +31,9 @@
     <Phantom_Name>test</Phantom_Name>
     <Phantom_Filename>test.vctx</Phantom_Filename>
 	<Phantom_Shape>Anthropomorphic</Phantom_Shape>
-    <Max_Ligament_Thickness>0.1</Max_Ligament_Thickness>  
-    <Min_Ligament_Thickness>0.1</Min_Ligament_Thickness>
-    <Voxel_Size>0.1</Voxel_Size>
+    <Max_Ligament_Thickness>0.4</Max_Ligament_Thickness>  
+    <Min_Ligament_Thickness>0.2</Min_Ligament_Thickness>
+    <Voxel_Size>0.2</Voxel_Size>
     <Size_X>6.270616636</Size_X>
     <Size_Y>6.270616636</Size_Y>
     <Size_CPrime>10.72938336</Size_CPrime>

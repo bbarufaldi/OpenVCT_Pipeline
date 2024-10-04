@@ -204,19 +204,11 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
 	sizeY = static_cast<size_t>(round((y0primmax - y0primmin) / deltay));
 	sizeZ = static_cast<size_t>(round((z0primmax - z0primmin) / deltaz));
 
-	std::cout << "Size X: " << sizeX << std::endl;
-	std::cout << "Size Y: " << sizeY << std::endl;
-	std::cout << "Size Z: " << sizeZ << std::endl;
-
 	size_t total = sizeX * sizeY * sizeZ + 1;
 
-	std::cout << "Total: " << total << std::endl;
 
 	// This is now used by both the standalone program and the demo program
 	phantom = new unsigned char[ total ]; // TODO: WHY ARE WE ALLOCATING MEMORY FOR TWO COPIES OF THE PHANTOM?!
-
-	std::cout << "Phantom Size: " << sizeof(&phantom) << std::endl;
-
 	if (phantom == nullptr)
     { 
         std::cerr << __FILE__ << ", " << __LINE__ << "Could not allocate memory (" << total 
@@ -272,7 +264,7 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
 		std::ofstream log("ERROR_LOG.log", std::ofstream::app);
 		if (log)
 		{
-			log << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ 
+			log /*<< std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ */
 				<< __FUNCTION__ << ": Attempt to set up CL for Voxel Parallelization failed.\n"
                 << "Terminating Program.\n";
 			log.close();
@@ -402,15 +394,10 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
     try
     {
         clCommandQueue.finish();
-
-		std::cout << "textureBuffer before" << std::endl;
-
-		texture = cl::Buffer(context, CL_MEM_READ_WRITE,
-                             (size_t)(VoxelDimension) * (size_t)(VoxelDimension) * (size_t)(VoxelDimension) * sizeof(cl_uchar), // 1 byte per voxel
+        texture = cl::Buffer(context, CL_MEM_READ_WRITE,
+                             (size_t)(VoxelDimension * VoxelDimension * VoxelDimension * sizeof(cl_uchar)), // 1 byte per voxel
                              NULL, &err); // Added use of error flag to check for success
         
-		std::cout << "textureBuffer after " << (size_t)(VoxelDimension) * (size_t)(VoxelDimension) * (size_t)(VoxelDimension) * sizeof(cl_uchar)  << std::endl;
-
         // Check error flag in case exception-handling is turned off
         if (err != CL_SUCCESS)
         {
@@ -509,7 +496,7 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
 
             #if defined(LOG_ACTIVITY)
 			dbg.open("../../../Debug.log", std::ofstream::app);
-			dbg << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ << ", line " << __LINE__ << ": About to enqueueWriteImage" << std::endl;
+			dbg /*<< std::asctime(std::localtime(&time_result)) << ": " */<< __FUNCTION__ << ", line " << __LINE__ << ": About to enqueueWriteImage" << std::endl;
 			dbg.close();
             #endif
             
@@ -517,11 +504,9 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
             cl_uchar ai = 0;
             clCommandQueue.enqueueFillBuffer(texture, ai, 0, VoxelDimension*VoxelDimension*VoxelDimension*sizeof(cl_uchar), nullptr, nullptr);
             
-			std::cout << "enqueueFillBuffer after " << VoxelDimension * VoxelDimension * VoxelDimension * sizeof(cl_uchar) << std::endl;
-
             #if defined(LOG_ACTIVITY)
 			dbg.open("../../../Debug.log", std::ofstream::app);
-			dbg << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ << ", line " << __LINE__ << ": About to call recursive_data_split" << std::endl;
+			dbg /*<< std::asctime(std::localtime(&time_result)) << ": " */<< __FUNCTION__ << ", line " << __LINE__ << ": About to call recursive_data_split" << std::endl;
 			dbg.close();
             #endif
             
@@ -549,26 +534,28 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
             
             #if defined(LOG_ACTIVITY)
 			dbg.open("../../../Debug.log", std::ofstream::app);
-			dbg << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ << ", line " << __LINE__ << ": About to call clCommandQueue.flush();" << std::endl;
+			dbg /*<< std::asctime(std::localtime(&time_result)) << ": " */<< __FUNCTION__ << ", line " << __LINE__ << ": About to call clCommandQueue.flush();" << std::endl;
 			dbg.close();
             #endif
 
 			clCommandQueue.flush();
                 
-			for (int z = 0; z<=J0zmax-J0zmin; z++)    
+			unsigned long long index1 = 0L;
+            unsigned long long index2 = 0L;
+			for(long long z = 0L; z<=J0zmax-J0zmin; z++)    
 			{
-                for (int y = 0; y<=J0ymax-J0ymin; y++)
+                for(long long y = 0L; y<=J0ymax-J0ymin; y++)
                 {
-                    int x;
-                    for (x = 0; x<=J0xmax-J0xmin; x++)
+                    for (long long x = 0L; x<=J0xmax-J0xmin; x++)
                     {
-                        unsigned char s = voxelValues[VoxelDimension * (VoxelDimension * (z+Jizmin) + y+Jiymin) + Jixmin+x];     
-                        phantom[xsize * (ysize * (z+J0zmin) + y+J0ymin) + J0xmin+x] = s;
+                        index1 = VoxelDimension * (VoxelDimension * (z+Jizmin) + y+Jiymin) + Jixmin+x;
+                        index2 = xsize * (ysize * (z+J0zmin) + y+J0ymin) + J0xmin+x;
+                        //std::cout << __FUNCTION__ << ", line " << __LINE__ << ": Index 1 is " << index1 << ", Index2 is " << index2 << std::endl;
+                        unsigned char s = voxelValues[index1];
+                        phantom[index2] = s;
                     }			
                 }
-			}
-
-			std::cerr << __FUNCTION__ << ": done!\n" << std::endl;
+			}	
 		} 
         else
         {
@@ -578,7 +565,7 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
 		
         #if defined(LOG_ACTIVITY)
 		dbg.open("../../../Debug.log", std::ofstream::app);
-		dbg << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ << ", line " << __LINE__ << ": About to push back TOTALDISTR AVERAGEDISTR and TOTALCOOPER" << std::endl;
+		dbg /*<< std::asctime(std::localtime(&time_result)) << ": " */<< __FUNCTION__ << ", line " << __LINE__ << ": About to push back TOTALDISTR AVERAGEDISTR and TOTALCOOPER" << std::endl;
 		dbg.close();
         #endif
             
@@ -590,7 +577,7 @@ bool BreastPhantomGenerator::recursive_partition_simulation(
 	
     #if defined(LOG_ACTIVITY)
 	dbg.open("../../../Debug.log", std::ofstream::app);
-	dbg << std::asctime(std::localtime(&time_result)) << ": " << __FUNCTION__ << ", line " << __LINE__ << ": done with for (int i=0; i<N; i++)" << std::endl;
+	dbg /*<< std::asctime(std::localtime(&time_result)) << ": " */ << __FUNCTION__ << ", line " << __LINE__ << ": done with for (int i=0; i<N; i++)" << std::endl;
 	dbg.close();
     #endif
     

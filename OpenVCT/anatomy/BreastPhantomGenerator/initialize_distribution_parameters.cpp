@@ -419,7 +419,10 @@ void BreastPhantomGenerator::initialize_distribution_parameters(
                 ratio1 = Ratios1[ndx];             
                 ratio2 = Ratios2[ndx];
                 
-                outputStream << mucand[0] << mucand[1] << mucand[2] << label << speed << ratio1 << ratio2 <<'\n';
+                // outputStream << mucand[0] << mucand[1] << mucand[2] << label << speed << ratio1 << ratio2 <<'\n';
+                // Fixed 2021-01-15 per Predrag's report
+                outputStream << mucand[0] << " " << mucand[1] << " " << mucand[2] << " " 
+                             << label << " " << speed << " " << ratio1 << " " << ratio2 <<'\n';
 
             }
             

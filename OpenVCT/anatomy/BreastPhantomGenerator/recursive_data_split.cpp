@@ -408,7 +408,11 @@ void BreastPhantomGenerator::recursive_data_split(float a, float b, float cprim,
             splitKernel.setArg( 32, Xextents); // DH 2019-07-02
             splitKernel.setArg( 33, Yextents); // DH 2019-07-02
             splitKernel.setArg( 34, Zextents); // DH 2019-07-02
-            splitKernel.setArg( 35, phantom_shape); // DH 2020-11-30           
+            splitKernel.setArg( 35, phantom_shape); // DH 2020-11-30   
+
+			splitKernel.setArg( 36, max_ligament_thickness);  // New field as of 2021-01-13
+			splitKernel.setArg( 37, min_ligament_thickness);  // New field as of 2021-01-13
+
             
             evalKernel.setArg( 0, xMemoryObject[bufferside]); 
             evalKernel.setArg( 1, yMemoryObject[bufferside]);

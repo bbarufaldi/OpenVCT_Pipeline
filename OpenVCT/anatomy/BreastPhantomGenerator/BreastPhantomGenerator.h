@@ -17,8 +17,8 @@
 #include <OpenCL/cl2.hpp>
 #else
 #if defined __has_include
-   #if __has_include (<CL/opencl.hpp>)
-      #include <CL/opencl.hpp>
+   #if __has_include (<CL/cl2.hpp>)
+      #include <CL/cl2.hpp>
    #else
       #define USING_CL_HPP
       #define __CL_ENABLE_EXCEPTIONS
@@ -156,6 +156,17 @@ public:
       std::transform(shape.begin(), shape.end(), shape.begin(), toupper); // convert to upper case
       if      (shape == "BREAST") phantom_shape = 0; // Breast
       else if (shape == "CUBE")   phantom_shape = 1; // Cube;
+   }
+
+
+   ///<summary>Set the max and min ligament thickness used when shape is Cube.</summary>
+   ///<remarks>D. Higginbotham, 2021-01-13.</remarks>
+   ///<param name="max_lthick">Max ligament thickness.</param>
+   ///<param name="min_lthick">Min ligament thickness.</param>
+   void setLigamentThicknesses(float max_lthick, float min_lthick)
+   {
+	   max_ligament_thickness = max_lthick;
+	   min_ligament_thickness = min_lthick;
    }
 
 
@@ -352,6 +363,9 @@ protected:
 private:
 
    unsigned int phantom_shape;
+
+   float max_ligament_thickness;  // New field as of 2021-01-13
+   float min_ligament_thickness;  // New field as of 2021-01-13
   
    int   currentNodeCount;
    float deltaX; 

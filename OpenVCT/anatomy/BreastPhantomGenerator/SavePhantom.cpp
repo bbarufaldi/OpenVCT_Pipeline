@@ -43,7 +43,7 @@ SavePhantom::SavePhantom()
       subj_type("Anthropomorphic"),  // Default type for this program is ANTHROPOMORPHIC
       subj_gen("Female"),            // Default gender for this program is FEMALE
       subj_ped("false"),             // Default pediatric status for this program is FALSE
-      subj_age(47),                  // Default age for this program is 47 
+      subj_age(47),                  // Default age for this program is 47
       subj_dob("1970-12-31"),        // Default Date of Birth for this program is 1970-01-02
       subj_race("unknown_race"),     // No default Race for this program
       subj_eth("unknown_ethnicity"), // No default Ethnicity for this program
@@ -69,7 +69,7 @@ SavePhantom::SavePhantom()
       org_city("unknown_city"),
       org_zip("unknown_zip"),
       utc_offset(0),
-    
+
       voxel_array_uid("unknown_uid"),
       index_table_uid("unknown_uid"),
       xpl_phantom_UID("unknown_uid"),
@@ -79,6 +79,8 @@ SavePhantom::SavePhantom()
 
       phantom_output_path(""),
       phantom_filename("unknown_filename"),
+	  max_ligament_thickness(1.0f), // New field as of 2021-01-13
+	  min_ligament_thickness(0.2f), // New field as of 2021-01-13
       voxel_size(0.02f),
       a(5.0f),
       b(5.0f),
@@ -115,7 +117,7 @@ SavePhantom::~SavePhantom()
 
 bool SavePhantom::readConfig()
 {
-    // Read configuration file(s)    
+    // Read configuration file(s)
     bool status = clib.loadXML("vct_config.xml");
     if (status)
     {
@@ -127,7 +129,7 @@ bool SavePhantom::readConfig()
             {
                 readPhantom();
             }
-            
+
             status = clib.findNodeXML("Subject");
             if (status)
             {
@@ -161,15 +163,15 @@ bool SavePhantom::readConfig()
                         vct::Material mat = lab.getMaterial(j);
                         if (verbose)
                         {
-                            std::cout << "\tLabel " << i << " Material " << j+1 << " name: " << mat.getName() 
+                            std::cout << "\tLabel " << i << " Material " << j+1 << " name: " << mat.getName()
                                       << "Z is " << mat.getMaterialZ() << std::endl;
                         }
                     }
                 }
                 if (verbose) std::cout << "\nDone Reading Index Table Data from vct_config.xml\n" << std::endl;
 
-            } 
-            else 
+            }
+            else
             {
                 std::cerr << "\nUh-Oh, couldn't find Index_Table!\n" << std::endl;
             }
@@ -214,9 +216,9 @@ bool SavePhantom::readInputXML(std::string xmlfile)
             retval = clib.findNodeXML("Phantom");
             if (retval)
             {
-                readPhantom();   
+                readPhantom();
             }
-            
+
             /* The organization field has been moved to vct_config.xml
             retval = clib.findNodeXML("Organization");
             if (retval)
@@ -237,9 +239,9 @@ bool SavePhantom::readInputXML(std::string xmlfile)
             {
                 std::cout << "\nVoxel Array UID:\t" << voxel_array_uid << "\n\n";
             }
-            
+
             // Generator and Voxel Array information will be from the generator program itself
-            
+
             // Program inputs
             retval = clib.findNodeXML("Generator_Config");
             if (retval)
@@ -251,7 +253,7 @@ bool SavePhantom::readInputXML(std::string xmlfile)
             // Check whether to leave the temporary phantom files in memory when done
             // ..this saves time and effort when the next step is going to be to combine phantoms
             std::string leave_it("false");
-            if (!clib.getNodeValueXML("Leave_In_Temp_Folder", leave_it)) 
+            if (!clib.getNodeValueXML("Leave_In_Temp_Folder", leave_it))
             {
                 std::cerr << "Couldn't find \"Leave_In_Temp_Folder\" field" << std::endl;
             }
@@ -259,7 +261,7 @@ bool SavePhantom::readInputXML(std::string xmlfile)
         }
     }
     else std::cerr << "\n* ERROR: Could not read xml input file \"" << xmlfile << "\" *\n" << std::endl;
-    
+
     return retval;
 }
 
@@ -274,20 +276,20 @@ void SavePhantom::suggestPhantomName(std::string name)
 
     if (verbose)
     {
-        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__  
+        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__
                   << ": PHANTOM NAME IS \"" << phantom_name << "\"" << std::endl;
     }
 }
 
 
-void SavePhantom::setGenParms(std::string version, std::string id, std::string filename, 
-                              float vxlSize, float sizeX, float sizeY, float cprim, float csec, 
+void SavePhantom::setGenParms(std::string version, std::string id, std::string filename,
+                              float vxlSize, float sizeX, float sizeY, float cprim, float csec,
                               int seed, float dsig, float dperc, float skin, int compartments, float compthick,
-                              float mindist, float minspd, float mxspd, float minrat, float maxrat, 
-                              float p1, float q1, float p2, float q2, 
+                              float mindist, float minspd, float mxspd, float minrat, float maxrat,
+                              float p1, float q1, float p2, float q2,
                               std::string distFileOut, std::string distFileIn)
 {
-    // note: 
+    // note:
 
     this->filename = SavePhantom::temp_dir + filename;
     if (this->filename.find(SavePhantom::extension) == std::string::npos)
@@ -295,9 +297,9 @@ void SavePhantom::setGenParms(std::string version, std::string id, std::string f
         this->filename += SavePhantom::extension;
     }
 
-    if (verbose) 
+    if (verbose)
     {
-        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__  
+        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__
                   << ": PHANTOM NAME IS \"" << phantom_name << "\"" << std::endl;
     }
 
@@ -318,15 +320,15 @@ void SavePhantom::setGenParms(std::string version, std::string id, std::string f
     generator.setDSigma(dsig);
     generator.setDensePercent(dperc);
     generator.setSkinThickness(skin);
-    generator.setNumCompartments(compartments);        
+    generator.setNumCompartments(compartments);
     generator.setCompartThickness(compthick);
     generator.setMinDistBetweenSeeds(mindist);
     generator.setMinSpeedOfGrowth(minspd);
-    generator.setMaxSpeedOfGrowth(mxspd);   
+    generator.setMaxSpeedOfGrowth(mxspd);
     generator.setMinRatio(minrat);
     generator.setMaxRatio(maxrat);
     generator.setP1(p1);
-    generator.setQ1(q1);                    
+    generator.setQ1(q1);
     generator.setP2(p2);
     generator.setQ2(q2);
     generator.setDistrFileOut(distFileOut);
@@ -336,7 +338,7 @@ void SavePhantom::setGenParms(std::string version, std::string id, std::string f
 
 void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsigned char *phantom)
 {
-    vct::Vctx *vctx = new vct::Vctx;    
+    vct::Vctx *vctx = new vct::Vctx;
 
     // Set whether to leave the phantom in its temporary folder after creating its .vctx file
     vctx->setLeaveTemp(leave_in_temp_folder);
@@ -375,7 +377,7 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
     software.setRepository("https://xraylabsvr1.intranet.imagephysics.com/svn/VCTPipelineCode");
     software.setDate(date);
     software.setTime(time);
-    
+
     // Station
     vct::Station station;
     station.querySystem();
@@ -396,15 +398,16 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
 
     if (phantom_name.size() < 1) phantom_name="DEFAULT_NAME";
     if (ph_type.size() < 1) ph_type="VOXEL_ARRAY";
-    
+
     if (verbose)
     {
-        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__  
+        std::cout << "SavePhantom.cpp: " << __FUNCTION__ << ", line " << __LINE__
                   << ": PHANTOM NAME IS \"" << phantom_name << "\"" << std::endl;
     }
 
     ph.setPhantomName(phantom_name);
     ph.setPhantomShape(phantom_shape);
+	ph.setLigamentThicknesses(max_ligament_thickness, min_ligament_thickness);
     ph.setType(ph.interpretType(ph_type));
     ph.setUid(ph_uid);
     ph.setSource(ph.interpretSource(ph_src));        // vct::PENN);       // potential issue: PENN enum vs "University of Pennsylvania"
@@ -425,16 +428,16 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
     ph.setTrial(&trial);
     ph.setSubject(&subject);
     ph.setGenStation(&station);
-    ph.setGenOrganization(&org);    
+    ph.setGenOrganization(&org);
     ph.setGenSoftware(&software);
-        
-    vct::VoxelArray voxel_array;    
+
+    vct::VoxelArray voxel_array;
 
     voxel_array.setVoxelArrayUID(voxel_array_uid);
     voxel_array.setVoxelNum(xsize, ysize, zsize);
     voxel_array.setVoxelSize_mm(voxel_size, voxel_size, voxel_size);
     voxel_array.setVoxelOrder("X | Y | Z");
-    voxel_array.setVoxelType(vct::V_INT8);   
+    voxel_array.setVoxelType(vct::V_INT8);
     voxel_array.setBitsPerVoxel(8);
     float dircos[9] = { 1.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f }; // no rotation
     voxel_array.setDirectionCosines(dircos);
@@ -442,12 +445,12 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
 
     voxel_array.setVoxels(phantom);
     voxel_array.setTotalSize(static_cast<long long>(xsize * ysize * zsize));
-    
+
     size_t total_num_voxels = size_t(xsize * ysize * zsize);
     size_t non_air = total_num_voxels;
 
     // This takes a while, understandably
-    size_t glandular_voxels = static_cast<size_t>(voxel_array.countGlandular(i_table, non_air)); 
+    size_t glandular_voxels = static_cast<size_t>(voxel_array.countGlandular(i_table, non_air));
 
     if (verbose)
     {
@@ -457,17 +460,17 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
     }
 
     ph.setTotalNonAirVoxels(non_air);
-    float x_thickness_mm = xsize *  voxel_size;   
-    float y_thickness_mm = ysize *  voxel_size;   
+    float x_thickness_mm = xsize *  voxel_size;
+    float y_thickness_mm = ysize *  voxel_size;
     float z_thickness_mm = zsize *  voxel_size;
     ph.setXThickness_mm(x_thickness_mm);
     ph.setYThickness_mm(y_thickness_mm);
     ph.setZThickness_mm(z_thickness_mm);
     ph.setGlandularCount(glandular_voxels);
-    
+
     ph.setVoxelArray(&voxel_array);
 
-    
+
     // Index Table Stuff
     //                    Name         Weight Density  MaterialZ
     vct::Material air(    "Air",       1.0f,  0.0012f, 201);
@@ -477,15 +480,15 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
     vct::Material glnd2a( "Glandular", 0.25f, 1.04f,   205);
     vct::Material glnd2b( "Glandular", 0.75f, 1.04f,   206);
 
-    
+
     vct::Label lab1(0, air);
     vct::Label lab2(1, glnd1);
     vct::Label lab3(2, skin);
     vct::Label lab4(3, adipose);
     vct::Label lab5(4, glnd2a);
-    lab5.addMaterial(glnd2b);    
+    lab5.addMaterial(glnd2b);
 
-    
+
     // Write the Index Table
     i_table.setUID(index_table_uid);
 
@@ -511,12 +514,12 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
         path = path.substr(pos+1);
     }
 
-    if (verbose) 
+    if (verbose)
     {
-        std::cout << __FUNCTION__ << ", line " << __LINE__  << ": path is \"" << path 
+        std::cout << __FUNCTION__ << ", line " << __LINE__  << ": path is \"" << path
                   << " AND PHANTOM NAME IS \"" << phantom_filename << "\"" << std::endl;
     }
-    
+
     vctx->writeVctx(path, phantom_filename);
 
     // Write out a generation report if input was from an XML file (as opposed to pure command line)
@@ -536,13 +539,13 @@ void SavePhantom::save(long long xsize, long long ysize, long long zsize, unsign
         clib.concludeSectionXML();
 
         // Write glandular count
-        clib.writeNodeValueXML("Glandular_Count", glandular_voxels); 
-    
+        clib.writeNodeValueXML("Glandular_Count", glandular_voxels);
+
         clib.addASectionXML("Date_Created");
         phantom_date.writeXML(&clib);
         clib.concludeSectionXML();
-        
-        clib.addASectionXML("Time_Created");        
+
+        clib.addASectionXML("Time_Created");
         phantom_time.writeXML(&clib);
         clib.concludeSectionXML();
 
@@ -588,7 +591,7 @@ void SavePhantom::readPhantom()
     clib.getNodeValueXML("Date_Created",   ph_date);
     clib.getNodeValueXML("Time_Created",   ph_time);
     clib.concludeSectionXML();
-    
+
     std::cout << __FUNCTION__ <<", line " << __LINE__ << ": Phantom Parameters are:\n";
     std::cout << "\tPhantom_UID:\t"    << ph_uid << "\n"
               << "\tPhantom_Source:\t" << ph_src << "\n"
@@ -599,7 +602,7 @@ void SavePhantom::readPhantom()
               << "\tLaterality:\t"     << ph_lat << "\n"
               << "\tDate_Created:\t"   << ph_date << "\n"
               << "\tTime_Created:\t"   << ph_time << "\n";
-    
+
 }
 
 
@@ -612,12 +615,12 @@ void SavePhantom::readSubject()
     clib.getNodeValueXML("Age",           subj_age);
     clib.getNodeValueXML("Date_Of_Birth", subj_dob);
     clib.getNodeValueXML("Race",          subj_race);
-    clib.getNodeValueXML("Ethnicity",     subj_eth); 
+    clib.getNodeValueXML("Ethnicity",     subj_eth);
     clib.getNodeValueXML("Weight",        subj_wt);
     clib.getNodeValueXML("Height",        subj_ht);
     clib.getNodeValueXML("BMI",           subj_bmi);
     clib.concludeSectionXML();
-    
+
     /*
     std::cout << __FUNCTION__ << ": Subject Parameters are:\n";
     std::cout << "\tSubject_UID:\t"     << subj_uid << "\n"
@@ -672,6 +675,9 @@ void SavePhantom::readProgramParameters()
     clib.getNodeValueXML("Phantom_Name",      phantom_name);
     clib.getNodeValueXML("Phantom_Filename",  phantom_filename);
     clib.getNodeValueXML("Phantom_Shape",     phantom_shape);
+	clib.getNodeValueXML("Max_Ligament_Thickness", max_ligament_thickness); // New field as of 2021-01-13
+	clib.getNodeValueXML("Min_Ligament_Thickness", min_ligament_thickness); // New field as of 2021-01-13
+	clib.getNodeValueXML("Phantom_Shape", phantom_shape);
     clib.getNodeValueXML("Voxel_Size",        voxel_size);
     clib.getNodeValueXML("Size_X",            a);
     clib.getNodeValueXML("Size_Y",            b);
@@ -714,7 +720,7 @@ void SavePhantom::readProgramParameters()
     {
         phantom_output_path = phantom_filename.substr(0, pos+1); // path includes delineator
     }
-    
+
     std::cout << __FUNCTION__ <<", line " << __LINE__ << ": Phantom Parameters are:\n";
     std::cout << "\tXPLPhantom_UID:\t" << xpl_phantom_UID << "\n"
               << "\tPhantomFilename:\t" << phantom_name << "\n"
@@ -740,7 +746,7 @@ void SavePhantom::readProgramParameters()
               << "\tBeta_q2:\t" << beta_q2 << "\n"
               << "\tDist_File_In:\t" << seed_dist_file_in << "\n"
               << "\tDist_File_Out:\t" << seed_dist_file_out << "\n";
-    
+
 }
 
 
@@ -786,7 +792,7 @@ void SavePhantom::dumpParameters(std::string description)
 bool SavePhantom::createSmallAttenFile(vct::Vctx &vctx)
 {
     bool retval = false;
-    
+
     if (verbose) std::cout << "\nBuilding abbreviated attenuation table...\n";
 
     int maxIndex = i_table.getLargestIndex();
@@ -803,7 +809,7 @@ bool SavePhantom::createSmallAttenFile(vct::Vctx &vctx)
             atten_table.addMaterial(mat.getMaterialZ());
         }
     }
-    
+
     atten_table.buildAttenTable();
     vctx.addPrivateData(&atten_table);
 

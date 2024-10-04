@@ -9,8 +9,7 @@
 
 
 BreastPhantomGenerator::BreastPhantomGenerator() 
-    : phantom_shape(0), // Breast
-      xsize(0), ysize(0), zsize(0),
+    : xsize(0), ysize(0), zsize(0),
       phantom(nullptr),
       voxelValues(nullptr),
       totalNodeCount(0),

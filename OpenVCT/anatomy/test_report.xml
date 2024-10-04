@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Phantom>
+	<Total_Non_Air_Voxels>88074150</Total_Non_Air_Voxels>
+	<Thickness_mm>
+		<X>62.799999</X>
+		<Y>125.599998</Y>
+		<Z>170.199997</Z>
+	</Thickness_mm>
+	<Glandular_Count>16777216</Glandular_Count>
+	<Date_Created>
+		<Year>2024</Year>
+		<Month>10</Month>
+		<Day>04</Day>
+	</Date_Created>
+	<Time_Created>
+		<Hour>17</Hour>
+		<Minute>00</Minute>
+		<Seconds>51</Seconds>
+		<Fraction>0000</Fraction>
+		<UTC_Offset>-5</UTC_Offset>
+	</Time_Created>
+	<Station>
+		<Name>59e0e0c71e12</Name>
+		<OS>Linux, release5.15.133.1-microsoft-standard-WSL2, version#1 SMP Thu Oct 5 21:02:42 UTC 2023</OS>
+		<Architecture>x86_64</Architecture>
+	</Station>
+	<Institution_Code_Sequence>1.2.826.0.1.3680043.2.936</Institution_Code_Sequence>
+	<Elapsed_Time_msec>25160</Elapsed_Time_msec>
+</Phantom>

@@ -290,6 +290,7 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
    cl::CommandQueue clCommandQueue;
    cl::Kernel       traceKernel, physicsKernel;
    cl::Device       dev;
+   cl::Platform     platform;
 
    try {
         std::vector<cl::Platform> platforms;
@@ -298,22 +299,57 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
             std::cout << "Error getting platforms." << std::endl;
             return -1;
         }
-        cl::Platform platform = platforms.front();
 
-        std::vector<cl::Device> devices;
-        platform.getDevices(CL_DEVICE_TYPE_DEFAULT, &devices);
-        if (devices.empty()) {
-            std::cout << "Error getting devices." << std::endl;
-            return -1;
+        // Iterate through platforms and list devices
+        for (size_t i = 0; i < platforms.size(); ++i) {
+            platform = platforms[i];
+
+            // Get platform info
+            std::string platform_name = platform.getInfo<CL_PLATFORM_NAME>();
+            std::string platform_version = platform.getInfo<CL_PLATFORM_VERSION>();
+            std::string platform_vendor = platform.getInfo<CL_PLATFORM_VENDOR>();
+            std::cout << "Platform " << i + 1 << ": " << platform_name << "\n";
+            std::cout << "  Vendor: " << platform_vendor << "\n";
+            std::cout << "  Version: " << platform_version << "\n";
+
+            // Get all devices on this platform
+            std::vector<cl::Device> devices;
+            platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+
+            if (devices.empty()) {
+                std::cout << "  Error: No devices found for this platform!" << std::endl;
+                continue;
+            }
+
+            // Print device details
+            for (size_t j = 0; j < devices.size(); ++j) {
+                cl::Device device = devices[j];
+                std::string device_name = device.getInfo<CL_DEVICE_NAME>();
+                cl_device_type device_type = device.getInfo<CL_DEVICE_TYPE>();
+
+                std::cout << "  Device " << j + 1 << ": " << device_name << "\n";
+                
+                // Identify device type
+                if (device_type == CL_DEVICE_TYPE_CPU) {
+                    std::cout << "    Type: CPU\n";
+                } else if (device_type == CL_DEVICE_TYPE_GPU) {
+                    std::cout << "    Type: GPU\n";
+                } else if (device_type == CL_DEVICE_TYPE_ACCELERATOR) {
+                    std::cout << "    Type: Accelerator\n";
+                } else {
+                    std::cout << "    Type: Other/Unknown\n";
+                }
+            }
+            dev = devices.front(); //check this
         }
-        dev = devices.front();
+        //double-check this!
+        platform = platforms.front(); //check this
         context = cl::Context(dev);
        
     } catch (cl::Error const err) {
         std::cout << "OpenCL error: " << err.what() << ", " << err.err() << ", "<< clib.getErrorString(err.err()) << std::endl;
         return -1;
     }
-
 
    // Initialize Poisson Distribution
    std::seed_seq seed(mSeed.begin(), mSeed.end());
@@ -381,6 +417,8 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
           }
       }
      // exit(-1);
+
+
 
       // Identify the kernel programs contained in the kernel source code file
       traceKernel   = cl::Kernel(program, "trace");

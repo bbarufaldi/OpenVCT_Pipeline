@@ -96,6 +96,10 @@ public:
         clib->writeNodeValueXML("Phantom_Name", phantom_name);
         clib->writeNodeValueXML("Phantom_Filename", phantom_filename);
 
+		clib->writeNodeValueXML("Phantom_Shape", phantom_shape);
+		clib->writeNodeValueXML("Max_Ligament_Thickness", max_lig_thick);  // New field as of 2021-01-13
+		clib->writeNodeValueXML("Min_Ligament_Thickness", min_lig_thick);  // New field as of 2021-01-13
+
         clib->writeNodeValueXML("Voxel_Size_CM", voxel_size);
 
         clib->writeNodeValueXML("Size_X", size_x_cm);
@@ -134,7 +138,10 @@ public:
         clib->getNodeValueXML("Software_ID", unique_id);
 
         clib->getNodeValueXML("PhantomFilename", phantom_filename);
+
         clib->getNodeValueXML("Phantom_Shape", phantom_shape);
+		clib->getNodeValueXML("Max_Ligament_Thickness", max_lig_thick);  // New field as of 2021-01-13
+		clib->getNodeValueXML("Min_Ligament_Thickness", min_lig_thick);  // New field as of 2021-01-13
 
         clib->getNodeValueXML("Voxel_Size", voxel_size);
 
@@ -177,6 +184,8 @@ public:
 		  phantom_name(),
 		  phantom_filename(),
 		  phantom_shape(),
+	      max_lig_thick(1.0f),  // New field as of 2021-01-13
+	      min_lig_thick(0.2f),  // New field as of 2021-01-13
           voxel_size(0.02f),
           size_x_cm(0),
           size_y_cm(0),
@@ -211,6 +220,10 @@ private:
     std::string phantom_name;
     std::string phantom_filename; // -f arg
     std::string phantom_shape;    // -shape arg
+
+	float       max_lig_thick;    // New field as of 2021-01-13
+	float       min_lig_thick;    // New field as of 2021-01-13
+
     float       voxel_size;       // -d arg
     float       size_x_cm;        // -x arg
     float       size_y_cm;        // -y arg
