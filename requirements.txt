@@ -1,6 +1,4 @@
 numpy
-matplotlib
-pyfastnoisesimd
 tifffile
 scikit-image
 pydicom
@@ -9,5 +7,4 @@ minidom-ext
 pathlib
 tqdm
 scipy
-cupy-cuda12x
 pyopencl

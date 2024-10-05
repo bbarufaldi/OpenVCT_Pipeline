@@ -19,14 +19,8 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install conda
-#ENV CONDA_DIR=/opt/conda
-#ENV PATH=$CONDA_DIR/bin:$PATH
-#RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && /bin/bash ~/miniconda.sh -b -p /opt/conda
-
 WORKDIR /app
 
-#PATHS
 ENV PATH="${PATH}:app/helpers/VctToolkit/include:app/helpers/VctToolkit/ZipLib/include:app/helpers/VctToolkit/ZipLib/bin/x64/Release"
 
 ENV NVIDIA_VISIBLE_DEVICES all

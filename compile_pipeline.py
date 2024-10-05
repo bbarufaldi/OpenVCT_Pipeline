@@ -3,6 +3,7 @@ import subprocess
 def compile_code(command):
     try:
         # Run the 'make' command with the specified Makefile
+
         result = subprocess.run(
             ['make', '-f', command], 
             check=True, 
@@ -20,8 +21,11 @@ def compile_code(command):
 
 if __name__ == "__main__":
     
-    print("Compiling Anatomy Code...")
-    compile_code("OpenVCT/anatomy/Makefile")
+    #print("Compiling Anatomy Code...")
+    #compile_code("OpenVCT/anatomy/Makefile")
+
+    print("Compiling Deformation Code...")
+    compile_code("OpenVCT/deform/Makefile")
     
-    print("Compiling RayTracing Code...")
-    compile_code("OpenVCT/raytracing/Makefile")
+    #print("Compiling RayTracing Code...")
+    #compile_code("OpenVCT/raytracing/Makefile")

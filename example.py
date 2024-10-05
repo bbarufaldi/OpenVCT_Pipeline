@@ -6,30 +6,49 @@ the workflow of virtual clinical trials through advanced computational technique
 Special thanks to all members of the X-ray Physics Lab (XPL) at the University of Pennsylvania for their 
 support and contributions to this project.
 '''
+import helpers.VctToolkit.writers.xml.breast_generator as gen
+import helpers.VctToolkit.constants.breast_constants as breast
 
-import helpers.VctToolkit.writers.xml.Projector as proj
-import helpers.VctToolkit.Constants as config
-import subprocess
+import helpers.VctToolkit.writers.xml.xray_generator as proj
+import helpers.VctToolkit.constants.system_constants as sys
+
 import OpenVCT.noise.NoiseModel as noise
+
+import subprocess
 import os
 
-os.chdir('./OpenVCT/anatomy') #change pwd
-subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", "./xml/phantom.xml"])
+#Change path and create results folders
+#os.chdir('/app/OpenVCT/anatomy') #change pwd
 
-# os.chdir('./OpenVCT/raytracing') #change pwd
-# writeProjXML = proj.XMLProjector(config=config.SystemConfig.HOLOGIC, 
-#                                  phantom_name="vctx/noise_1867251184_crop.vctx", 
-#                                  folder_name="proj/noise_1867251184_crop-proj")
+if not os.path.exists('xml'):
+    os.makedirs('xml')
+if not os.path.exists('vctx'):
+    os.makedirs('vctx')
 
-# writeProjXML.write_xml("./xml/noise_1867251184.xml")
-# subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/noise_1867251184.xml"])
+# breast_xml = gen.XMLBreastGenerator(config=breast.BreastConfig.CUP_C, 
+#                                     phantom_name="phantomC")
 
+# breast_xml.write_xml("./xml/phantomC.xml")
+# subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", "./xml/phantomC.xml"])
+
+#os.chdir(os.environ['HOME'])
+os.chdir('/app/OpenVCT/deform') #change pwd
+#subprocess.call(["./BreastPhantomDeformer_docker", "-v"])
+subprocess.call(["./BreastPhantomDeformer_docker", "-xml_input", "./xml/phantomC.xml"])
+
+# os.chdir(os.environ['HOME'])
+# os.chdir('/app/OpenVCT/raytracing') #change pwd
+# writeProjXML = proj.XMLProjector(config=sys.SystemConfig.HOLOGIC, 
+#                                  phantom_name="./../anatomy/vctx/phantomC.vctx", 
+#                                  folder_name="proj/phantomC-proj")
+
+# writeProjXML.write_xml("./xml/phantomC.xml")
+# subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/phantomC.xml"])
 
 # os.chdir('../') #change pwd
-
-# noise = noise.NoiseModel(config=config.SystemConfig.HOLOGIC, 
-#                         input_folder="raytracing/proj/noise_1867251184_crop-proj",
-#                         output_folder="noise/proj/noise_1867251184_crop-proj")
+# noise = noise.NoiseModel(config=sys.SystemConfig.HOLOGIC, 
+#                         input_folder="raytracing/proj/phantomC-proj",
+#                         output_folder="noise/proj/phantomC-proj")
 # noise.add_noise()
 
 
