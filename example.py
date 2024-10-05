@@ -34,7 +34,9 @@ if not os.path.exists('vctx'):
 #os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/deform') #change pwd
 #subprocess.call(["./BreastPhantomDeformer_docker", "-v"])
-subprocess.call(["./BreastPhantomDeformer_docker", "-xml_input", "./xml/phantomC.xml"])
+#subprocess.call(["./BreastPhantomDeformer_docker", "-xml_input", "./xml/phantomC.xml"])
+subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py"])
+#xvfb-run -s "-screen 0 800x600x24" python3 VolumeDeformer.py
 
 # os.chdir(os.environ['HOME'])
 # os.chdir('/app/OpenVCT/raytracing') #change pwd

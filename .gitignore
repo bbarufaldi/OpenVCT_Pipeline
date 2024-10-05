@@ -5,3 +5,6 @@
 *.xml
 *.feb
 *.log
+*.dat
+*.exe
+*.tif

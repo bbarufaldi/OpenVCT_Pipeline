@@ -14,6 +14,11 @@ RUN apt-get update && apt-get install -y \
     ocl-icd-opencl-dev \
     ocl-icd-libopencl1 \
     opencl-headers \
+    freeglut3-dev \
+    libgl1-mesa-glx \
+    libgl1-mesa-dri \
+    mesa-utils \
+    xvfb \
     clinfo \
     && \
     apt-get clean && \

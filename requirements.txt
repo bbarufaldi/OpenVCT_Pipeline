@@ -8,3 +8,6 @@ pathlib
 tqdm
 scipy
 pyopencl
+zip-files
+PyOpenGL
+glfw
