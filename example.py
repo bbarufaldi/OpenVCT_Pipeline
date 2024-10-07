@@ -18,23 +18,16 @@ import subprocess
 import os
 
 #Change path and create results folders
-#os.chdir('/app/OpenVCT/anatomy') #change pwd
-
-if not os.path.exists('xml'):
-    os.makedirs('xml')
-if not os.path.exists('vctx'):
-    os.makedirs('vctx')
+os.chdir('/app/OpenVCT/anatomy') #change pwd
 
 # breast_xml = gen.XMLBreastGenerator(config=breast.BreastConfig.CUP_C, 
-#                                     phantom_name="phantomC")
+#                                     phantom_name="PhantomC")
 
 # breast_xml.write_xml("./xml/phantomC.xml")
 # subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", "./xml/phantomC.xml"])
 
-#os.chdir(os.environ['HOME'])
+os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/deform') #change pwd
-#subprocess.call(["./BreastPhantomDeformer_docker", "-v"])
-#subprocess.call(["./BreastPhantomDeformer_docker", "-xml_input", "./xml/phantomC.xml"])
 subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py"])
 #xvfb-run -s "-screen 0 800x600x24" python3 VolumeDeformer.py
 

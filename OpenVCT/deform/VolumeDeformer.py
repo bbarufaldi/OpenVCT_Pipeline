@@ -4,43 +4,52 @@ from OpenGL.GLUT import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import numpy as np
 from tifffile import imwrite
-import zipfile as zip
 import glfw
 import xml.etree.ElementTree as ET
-import time
 import logging as log
 import ctypes
 
-class VolumeDeformer:
-    def __init__(self):
-        # Initialize variables similar to the constructor in C++
-        self.hRC2 = None
+from readers.xml import Phantom as ph
+from readers.xml import Meshes as me
 
-        #undeformed
+class VolumeDeformer:
+    def __init__(self): 
+        # Initialize variables similar to the constructor in C++
+
+        #Phantom
+        self.phantom = None
+        
+        #OGL variables
+        self.hRC2 = None
+        self.hadValidRC = False
+        self.textureID = None
+        self.deformedTextureID = None
+        self.frameBuffer = None
+        self.shader_program = None
+
+        #original phantom
         self.vxlCntIn_x = 0.0
         self.vxlCntIn_y = 0.0
         self.vxlCntIn_z = 0.0
         self.voxelSize_x = 0.0
         self.voxelSize_y = 0.0
         self.voxelSize_z = 0.0
-
-        self.nodes_feb = None
-        self.elements_feb = None
-
-        self.def_mode = 'DEFORM_ML'
-        self.hadValidRC = False
-        self.textureID = None
-        self.deformedTextureID = None
-        self.frameBuffer = None
-
-        #deformed
+        
+        #deformed phantom
         self.fxDim = 0.0
         self.fyDim = 0.0
         self.fzDim = 0.0
         self.def_ratio_x = 1.0
         self.def_ratio_y = 1.0
         self.def_ratio_z = 1.0
-        self.shader_program = None
+
+        #meshes
+        self.nodes_feb = None 
+        self.elements_feb = None
+        self.def_mode = None
+
+    def set_phantom(self, phantom):
+        self.phantom = phantom
 
     def set_phantom_voxel_counts(self, vxlCntX, vxlCntY, vxlCntZ):
         # Set voxel counts from phantom data
@@ -54,13 +63,11 @@ class VolumeDeformer:
         self.voxelSize_y = vsizeY * 0.001
         self.voxelSize_z = vSizeZ * 0.001
 
-    def set_deformation_ratios(self, ratio_x, ratio_y, ratio_z):
-        # Set deformation ratios explicitly if needed
-        self.def_ratio_x = ratio_x
-        self.def_ratio_y = ratio_y
-        self.def_ratio_z = ratio_z
+    def process(self, pdlog, original_mesh, deformed_mesh, phantom):
 
-    def process(self, pdlog, original_mesh, deformed_mesh):
+        # Set phantom
+        self.phantom = phantom
+
         # Set up OpenGL and process the mesh data
         pdlog.info("Setting up OpenGL context.")
         
@@ -78,8 +85,9 @@ class VolumeDeformer:
         self.build_glsl_program(pdlog)
 
         # Read the mesh files
-        self.nodes_feb, self.elements_feb = self.read_source_mesh_febio(pdlog, original_mesh)
-        self.read_def_nodes_febio(pdlog, deformed_mesh)
+        mesh = me.Meshes(original_mesh, deformed_mesh, phantom, pdlog)
+        self.nodes_feb, self.elements_feb, self.def_mode = mesh.read_source_mesh_febio()
+        self.def_ratio_x, self.def_ratio_y, self.def_ratio_z = mesh.read_def_nodes_febio()
 
         # Create and bind buffers
         vbo32 = glGenBuffers(2)
@@ -246,209 +254,14 @@ class VolumeDeformer:
         
         return self.deformedTextureID
 
-    def read_source_mesh_febio(self, log, file_path):
-
-        nodes, elements = [], []
-
-        # Start timer for performance tracking
-        start_time = time.time()
-        
-        log.info("Reading original nodes")
-        
-        try:
-            # Parse XML document
-            tree = ET.parse(file_path)
-            root = tree.getroot()
-            
-            geometry_node = root.find("./Geometry/Nodes")
-            
-            if geometry_node is not None:
-                log.info(f"Found geometry nodes in {file_path}")
-                
-                min_d, min_c, min_b = float('inf'), float('inf'), float('inf')
-                max_d, max_c, max_b = float('-inf'), float('-inf'), float('-inf')
-                
-                for tool in geometry_node:
-                    line = tool.text.strip()
-                    b, c, d = map(float, line.split(','))
-
-                    # Push dummy entries for deformed mesh (to be filled later)
-                    nodes.extend([0.0, 0.0, 0.0])
-
-                    # Push undeformed mesh in meters (d, c, b correspond to x, y, z)
-                    nodes.extend([d, c, b])
-
-                    # Update min/max values
-                    min_d, max_d = min(min_d, d), max(max_d, d)
-                    min_c, max_c = min(min_c, c), max(max_c, c)
-                    min_b, max_b = min(min_b, b), max(max_b, b)
-                
-                log.info(f"Range of Node locations - undeformed (in mm):")
-                log.info(f"\tx ranges from {min_d} to {max_d}")
-                log.info(f"\ty ranges from {min_c} to {max_c}")
-                log.info(f"\tz ranges from {min_b} to {max_b}")
-            
-            # Read the material section to identify rigid bodies
-            material_node = root.find("./Material")
-            material_map = {}
-            
-            for tool in material_node:
-                material_type = tool.get('type')
-                material_id = int(tool.get('id'))
-                is_rigid = "rigid" in material_type.lower()
-                material_map[material_id] = is_rigid
-
-            for material_id, is_rigid in material_map.items():
-                log.info(f"MaterialMap item: {material_id}, {'rigid' if is_rigid else 'non-rigid'}")
-
-            # Read the elements and filter out the rigid body elements
-            elements_node = root.find("./Geometry/Elements")
-            if elements_node is not None:
-                element_count = 0
-
-                min_d, min_c, min_b = float('inf'), float('inf'), float('inf')
-                max_d, max_c, max_b = float('-inf'), float('-inf'), float('-inf')
-                
-                for tool in elements_node:
-                    line = tool.text.strip()
-                    c, b, e, d = map(int, line.split(','))
-
-                    mat = int(tool.get('mat'))
-                    if not material_map[mat]:  # If not rigid, process the element
-                        # Push element vertices
-                        elements.extend([b - 1, c - 1, d - 1, e - 1])
-                        element_count += 1
-
-                        # Update min/max for non-rigid nodes
-                        for idx in [b, c, d, e]:
-                            dval, cval, bval = nodes[(idx - 1) * 6 + 3: (idx - 1) * 6 + 6] # 5 in c++
-                            min_d, max_d = min(min_d, dval), max(max_d, dval)
-                            min_c, max_c = min(min_c, cval), max(max_c, cval)
-                            min_b, max_b = min(min_b, bval), max(max_b, bval)
-                
-                log.info(f"Element count: {element_count*4}") #from b to e
-                log.info(f"Range of Node locations - undeformed without compression plates (in mm):")
-                log.info(f"\tx ranges from {min_d} to {max_d}")
-                log.info(f"\ty ranges from {min_c} to {max_c}")
-                log.info(f"\tz ranges from {min_b} to {max_b}")
-
-        except ET.ParseError as e:
-            log.error(f"Can't load the .feb file \"{file_path}\": {e}")
-            raise SystemExit(f"Error parsing FEBio XML file: {e}")
-        
-        # Log the time taken to execute the function
-        log.info(f"Entire read_source_mesh_febio() function took {int((time.time() - start_time) * 1000)} ms.")
-        return nodes, elements
-
-    def read_def_nodes_febio(self, log, file_path):
-        # Start timer for performance tracking
-        start_time = time.time()
-        
-        log.info(f"Reading deforming nodes from {file_path}")
-
-        try:
-            with open(file_path, 'r') as node_file:
-                found = 0
-                lines = node_file.readlines()
-
-                # Find the position of the last occurrence of "Data = ux;uy;uz"
-                for i, line in enumerate(lines):
-                    if "Data = ux;uy;uz" in line:
-                        found = i
-
-                log.info("Have advanced to final iteration of 'Data' in the log file... will now read it.")
-
-                # Initialize min/max values for deformed and undeformed nodes
-                mindnew, mincnew, minbnew = float('inf'), float('inf'), float('inf')
-                maxdnew, maxcnew, maxbnew = float('-inf'), float('-inf'), float('-inf')
-                
-                if found > 0:
-                    index = 0
-                    
-                    log.info(f"Voxel size: {self.voxelSize_x}, voxel counts: {self.vxlCntIn_x} {self.vxlCntIn_y} {self.vxlCntIn_z}")
-
-                    # Start reading the deformation data from the position of the last "Data = ux;uy;uz"
-                    for line in lines[found+1:]:
-                        line = line.strip()
-                        if line:
-                            try:
-                                a, b, c, d = map(float, line.split())
-
-                                # Add deformation to undeformed node (node positions in meters)
-                                newd = self.nodes_feb[index*6+3] + d
-                                newc = self.nodes_feb[index*6+4] + c
-                                newb = self.nodes_feb[index*6+5] + b
-
-                                # Update the deformed node array based on the deformation mode
-                                if self.def_mode == 'DEFORM_ML':
-                                    self.nodes_feb[index*6] = newd
-                                    self.nodes_feb[index*6+1] = newc
-                                    self.nodes_feb[index*6+2] = newb
-                                
-                                elif self.def_mode == 'DEFORM_CC':
-                                    self.nodes_feb[index*6] = self.nodes_feb[index*6+3] + d
-                                    self.nodes_feb[index*6+1] = self.nodes_feb[index*6+4] + b
-                                    self.nodes_feb[index*6+2] = self.nodes_feb[index*6+5] - c
-
-                                # Update min/max values for deformed nodes
-                                mindnew, maxdnew = min(mindnew, newd), max(maxdnew, newd)
-                                mincnew, maxcnew = min(mincnew, newc), max(maxcnew, newc)
-                                minbnew, maxbnew = min(minbnew, newb), max(maxbnew, newb)
-
-                                index += 1
-                            except ValueError:
-                                break
-                    
-                    log.info(f"Range of Deformation with compression plates (in mm):")
-                    log.info(f"\tx ranges from {mindnew} to {maxdnew}")
-                    log.info(f"\ty ranges from {mincnew} to {maxcnew}")
-                    log.info(f"\tz ranges from {minbnew} to {maxbnew}")
-                    log.info(f"Number of deformed nodes: {index}")
-
-                    # Normalize the node positions between 0 and 1
-                    min_vals = [float('inf')] * 6
-                    max_vals = [float('-inf')] * 6
-
-                    log.info(f"Reading deforming nodes. Node Size: " + str(len(self.nodes_feb)))
-                    log.info(f"Reading deforming nodes. Element Size: " + str(len(self.elements_feb)))
-
-                    for i in range(0, len(self.elements_feb)):
-                        for j in range(0, 6):
-                            min_vals[j] = min(min_vals[j], self.nodes_feb[self.elements_feb[i]*6 + j])
-                            max_vals[j] = max(max_vals[j], self.nodes_feb[self.elements_feb[i]*6 + j])
-
-                    # Calculate deformation ratios based on min/max values
-                    self.set_deformation_ratios((max_vals[0] - min_vals[0]) / (max_vals[3] - min_vals[3]),
-                                                (max_vals[1] - min_vals[1]) / (max_vals[4] - min_vals[4]),
-                                                (max_vals[2] - min_vals[2]) / (max_vals[5] - min_vals[5]))
-                    
-                    log.info(f"Deformation ratios: def_ratio_x = {self.def_ratio_x}, def_ratio_y = {self.def_ratio_y}, def_ratio_z = {self.def_ratio_z}")
-                    
-                    for i in range(0, len(self.nodes_feb), 6):
-                        for j in range(3):  # Normalize both deformed (first 3) and undeformed (last 3) nodes
-                            self.nodes_feb[i + j] = (self.nodes_feb[i + j] - min_vals[j]) / (max_vals[j] - min_vals[j])
-                            self.nodes_feb[i + j + 3] = (self.nodes_feb[i + j + 3] - min_vals[j + 3]) / (max_vals[j + 3] - min_vals[j + 3])
-
-                    
-                    log.info(f"Normalization complete. Min/max values normalized. This information is only used to debug the code.")
-                    for j in range(6):
-                        log.info(f"Min["+str(j)+"] = "+str(min_vals[j]) + ", Max["+str(j)+"] = "+str(max_vals[j]) + ", Delta["+str(j)+"] = "+str(max_vals[j]-min_vals[j]))
-
-        except FileNotFoundError:
-            log.error(f"Can't load the log file {file_path}. Exiting.")
-            raise SystemExit(f"Can't load the log file {file_path}. Exiting.")
-        
-        # Log the total execution time
-        log.info(f"Entire read_def_nodes_febio() function took {int((time.time() - start_time) * 1000)} ms.")
-
     def draw(self, pdlog):
         if self.frameBuffer is None:
             pdlog.error("Framebuffer is NULL")
             raise SystemExit("Framebuffer is NULL")
 
         pdlog.info("Start Deforming")
+        
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
-
         glBindFramebuffer(GL_FRAMEBUFFER, self.frameBuffer)
 
         # Use the shader program
@@ -475,8 +288,8 @@ class VolumeDeformer:
         glUniform4f(iOffset, 0.5, 0.5, 0.0, 0.0)  # Offset to center the texture in x and y
 
         # Buffer to hold each output slice (one slice at a time)
-        pdlog.info(f"Output phantom sizes: {self.fxDim} x {self.fyDim} x {self.fzDim}")
-        output_volume = np.zeros((self.fxDim, self.fyDim, self.fzDim), dtype=np.uint8)
+        pdlog.info(f"Output phantom sizes: {self.fzDim} x {self.fxDim} x {self.fyDim}")
+        output_volume = np.zeros((self.fzDim, self.fxDim, self.fyDim), dtype=np.uint8)
         print(output_volume.shape)
 
         # Render the phantom slice by slice
@@ -509,34 +322,27 @@ class VolumeDeformer:
             if i % 30 == 0:
                 pdlog.info(f"Slice {i} out of {self.fzDim}")
 
-        # Save the full 3D volume using tifffile's imwrite
-        #output_volume = np.transpose(output_volume, (2, 1, 0)) #Permute X and Z to match dimensions of c++ code
-        imwrite('deformed_phantom.tif', output_volume, dtype=np.uint8)
-        output_volume.astype('uint8').tofile("./Phantom.dat")
-        pdlog.info("Deformed phantom successfully written to Phantom.dat")
-
         # Unbind the VBO and framebuffer to clean up
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
         pdlog.info("Deforming process completed.")
+        return output_volume
 
 # Main function remains largely the same but includes some refinements.
 if __name__ == "__main__":
+
+    phantom = ph.Phantom('vctx/PhantomC.vctx')
     deformer = VolumeDeformer()
     
-    with zip.ZipFile('vctx/PhantomC.vctx', mode='r') as filezip:
-        with filezip.open('phantomC/Phantom.dat') as file:
-            voxel_data = file.read()
-    
-    voxel_data = np.frombuffer(bytearray(voxel_data), dtype=np.uint8).reshape(851, 628, 314)
-    print(voxel_data.shape)
-    voxel_data = np.transpose(voxel_data, (2, 1, 0)) #Permute X and Z to match dimensions of c++ code
-    print(voxel_data.shape)
+    voxel_data = phantom.voxel_data
+    #voxel_data = np.transpose(voxel_data, (2, 1, 0)) #Permute X and Z to match dimensions of c++ code (JUST to DEBUG and match logs)
+    #print(voxel_data.shape)
     #imwrite('Phantom.tif', voxel_data)
     
-    deformer.set_phantom_voxel_counts(314, 628, 851)
-    deformer.set_phantom_voxel_sizes(0.2, 0.2, 0.2)
+    deformer.set_phantom_voxel_counts(voxel_data.shape[2], voxel_data.shape[1], voxel_data.shape[0]) #Permute X with Z
+    vxl = phantom.get_voxel_mm()
+    deformer.set_phantom_voxel_sizes(vxl[2], vxl[1], vxl[0]) #Permute X with Z
 
     log.basicConfig(filename='VolumeDeformer.log', level=log.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -556,12 +362,15 @@ if __name__ == "__main__":
     glfw.make_context_current(window)
 
     try:
-        deformer.process(logger, "./meshes/cupC_200ML.feb", "./meshes/cupC_200ML.log")
+        deformer.process(logger, "./meshes/cupC_200ML.feb", "./meshes/cupC_200CC.log", phantom)
         texture_id = deformer.load_volume(logger, voxel_data)
         logger.info(f"Loaded volume with texture ID: {texture_id}")
         deformed_texture_id = deformer.set_volume(logger)
         logger.info(f"Deformed texture generated with texture ID: {deformed_texture_id}")
-        deformer.draw(logger)
+        voxel_data = deformer.draw(logger)
+        phantom.write_vctx(voxel_data, phantom.get_file_name()+"2", deformer.def_mode)
+        logger.info("Deformed phantom successfully written to Phantom.dat")
+    
     finally:
         glfw.destroy_window(window)
         glfw.terminate()
