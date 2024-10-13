@@ -6,17 +6,16 @@ CXXFLAGS = -std=c++11
 SRCDIR1 = OpenVCT/raytracing/XPLProjectionSimulation
 SRCDIR2 = OpenVCT/raytracing/XPLRayTracing
 
-VCTDIR  = helpers/VctToolkit
-GDCMDIR = usr/include/gdcm-3.0
+VCTDIR  = Toolkit
+GDCMDIR = /usr/include/gdcm-3.0
 
 INCDIR  = -I. -I$(SRCDIR1) -I$(SRCDIR2) \
-          -I$(VCTDIR)/include -I$(VCTDIR)/ZipLib/include \
-          -I$(GDCMDIR)
+          -I$(VCTDIR)/include -I$(VCTDIR)/ZipLib/include -I$(GDCMDIR)
 
 VCTLDIR = -L$(VCTDIR)/ZipLib/bin/x64/Release
 VLIBS   = -lziplib -llzma -lbzip2 -lzlib -pthread
 
-GDCM = usr/lib/x86_64-linux-gnu
+GDCM = /usr/lib/x86_64-linux-gnu
 GDCMLDIR = -L$(GDCM)
 
 GLIBS    = -lgdcmCommon -lgdcmDICT -lgdcmDSED \

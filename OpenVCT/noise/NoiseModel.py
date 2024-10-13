@@ -117,11 +117,11 @@ class NoiseModel:
                 vct_gen = vct_gen.astype(np.uint16)
             
                 ds = pydicom.dcmread(folder_name + '/_{}.dcm'.format(z))
-                ds.PixelData = vct_gen
+                ds.PixelData = vct_gen.tobytes()
                 ds.SeriesNumber = np.random.randint(1000000)
                 ds.InstanceNumber = z
             
-                pydicom.write_file(folder_name_noisy + '/_{:02d}.dcm'.format(z), ds)
+                pydicom.dcmwrite(folder_name_noisy + '/_{:02d}.dcm'.format(z), ds)
                 
                 # Save noiseless version with corrected mean value
                 if n == 1 and dose2gen == 100:
@@ -130,10 +130,10 @@ class NoiseModel:
                     
                     vct_gen = vct_gen.astype(np.uint16)
             
-                    ds.PixelData = vct_gen 
+                    ds.PixelData = vct_gen.tobytes() 
                     ds.SeriesNumber = np.random.randint(1000000)
                 
-                    pydicom.write_file(folder_name_gt + '/_{:02d}.dcm'.format(z), ds)
+                    pydicom.dcmwrite(folder_name_gt + '/_{:02d}.dcm'.format(z), ds)
         
 
 

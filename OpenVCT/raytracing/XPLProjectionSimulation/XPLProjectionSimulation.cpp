@@ -259,6 +259,7 @@ int main(int argc, char *argv[])
         using_xml_input_file = true;
         std::string xml_input_file(argv[2]);
         bool success = rp.readInputXML(log, xml_input_file);
+        std::cout << "rp.readInputXML(" << xml_input_file << ") returned " << (success?"true":"false") << std::endl;
         if (!success)
         {
             Usage(prog_name); // Print instructions for specifying command line arguments...
@@ -364,7 +365,6 @@ int main(int argc, char *argv[])
 
     short width = xplRayTrace.GetWidth();
     short height = xplRayTrace.GetHeight();
-    
     log.info << "Detector size is " << width << "x" << height << '\n';
 
     gdcm::ImageReader reader; // Reader persists across all acquisitions
@@ -373,8 +373,8 @@ int main(int argc, char *argv[])
     std::string dicom_filename = FindDicomTemplate(configGeomFile);
     log.info << "DICOM template: " << dicom_filename << '\n';
 
+
     reader.SetFileName(dicom_filename.c_str());
-    
     if (!reader.Read())
     {
         std::ostringstream oss;
@@ -703,6 +703,7 @@ int main(int argc, char *argv[])
 
     delete [] buffer;
 
+
     // Output summary of processing
     if (using_xml_input_file) rp.generateReport();
 
@@ -730,9 +731,8 @@ int main(int argc, char *argv[])
     log.setSeverityLevel(vct::Logger::LOG_NONE);
     ofs_log.close();
 
-    std::cout << "About to end program" << std::endl;
-    //clib.sleep(1000);
-    std::abort();
+    //std::cout << "About to end program" << std::endl;
+    clib.sleep(1000);
     return 0; // GDCM buffer overrun check disable via "/GS-" under Configuration Properties->C/C++->Code Generation->Security Check
 }
 

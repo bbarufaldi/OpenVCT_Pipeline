@@ -8,3 +8,5 @@
 *.dat
 *.exe
 *.tif
+*_docker
+*_report.xml

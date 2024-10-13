@@ -10,7 +10,7 @@ CXX = g++
 CXXFLAGS = -std=c++11
 SRCDIR = OpenVCT/anatomy/BreastPhantomGenerator
 OBJDIR = $(SRCDIR)/obj
-VCTDIR  = helpers/VctToolkit
+VCTDIR  = Toolkit
 
 INCDIR = -I. -I$(SRCDIR) -I$(VCTDIR)/include -I$(VCTDIR)/ZipLib/include
 LIBDIR = -L$(VCTDIR)/ZipLib/bin/x64/Release 

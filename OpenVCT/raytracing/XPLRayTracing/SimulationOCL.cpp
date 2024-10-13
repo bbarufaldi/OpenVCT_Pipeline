@@ -308,9 +308,9 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
             std::string platform_name = platform.getInfo<CL_PLATFORM_NAME>();
             std::string platform_version = platform.getInfo<CL_PLATFORM_VERSION>();
             std::string platform_vendor = platform.getInfo<CL_PLATFORM_VENDOR>();
-            std::cout << "Platform " << i + 1 << ": " << platform_name << "\n";
-            std::cout << "  Vendor: " << platform_vendor << "\n";
-            std::cout << "  Version: " << platform_version << "\n";
+            //std::cout << "Platform " << i + 1 << ": " << platform_name << "\n";
+            //std::cout << "  Vendor: " << platform_vendor << "\n";
+            //std::cout << "  Version: " << platform_version << "\n";
 
             // Get all devices on this platform
             std::vector<cl::Device> devices;
@@ -327,7 +327,8 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
                 std::string device_name = device.getInfo<CL_DEVICE_NAME>();
                 cl_device_type device_type = device.getInfo<CL_DEVICE_TYPE>();
 
-                std::cout << "  Device " << j + 1 << ": " << device_name << "\n";
+                /*
+                //std::cout << "  Device " << j + 1 << ": " << device_name << "\n";
                 
                 // Identify device type
                 if (device_type == CL_DEVICE_TYPE_CPU) {
@@ -339,6 +340,7 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
                 } else {
                     std::cout << "    Type: Other/Unknown\n";
                 }
+                */
             }
             dev = devices.front(); //check this
         }

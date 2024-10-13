@@ -1,11 +1,9 @@
-import OpenGL.GL as gl
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GL.shaders import compileProgram, compileShader
-import numpy as np
-from tifffile import imwrite
 import glfw
-import xml.etree.ElementTree as ET
+
+import numpy as np
 import logging as log
 import ctypes
 

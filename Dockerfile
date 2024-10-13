@@ -26,10 +26,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-ENV PATH="${PATH}:app/helpers/VctToolkit/include:app/helpers/VctToolkit/ZipLib/include:app/helpers/VctToolkit/ZipLib/bin/x64/Release"
-
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV PATH="${PATH}:app/Toolkit/include:app/Toolkit/ZipLib/include:app/Toolkit/ZipLib/bin/x64/Release"
+ENV PYTHONPATH="/app/OpenVCT/_helpers"
 
 COPY . .
 
