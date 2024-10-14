@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-class XMLDeformerWriter:
+class XMLWriter:
     def __init__(self, config, in_phantom, out_phantom):
         self.config = config
         self.in_phantom = in_phantom
