@@ -6,6 +6,7 @@
 *.feb
 *.log
 *.dat
+*.raw
 *.exe
 *.tif
 *_docker
