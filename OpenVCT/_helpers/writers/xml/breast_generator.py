@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-class XMLBreastGenerator:
+class XMLBreastWriter:
     def __init__(self, config, phantom_name):
         self.config = config
         self.phantom_name = phantom_name

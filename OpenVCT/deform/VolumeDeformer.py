@@ -8,7 +8,10 @@ import logging as log
 import ctypes
 
 from readers.xml import Phantom as ph
+from readers.xml import Deformer as vol
 from readers.xml import Meshes as me
+
+import argparse
 
 class VolumeDeformer:
     def __init__(self): 
@@ -330,46 +333,55 @@ class VolumeDeformer:
 # Main function remains largely the same but includes some refinements.
 if __name__ == "__main__":
 
-    phantom = ph.Phantom('vctx/PhantomC.vctx')
-    deformer = VolumeDeformer()
-    
-    voxel_data = phantom.voxel_data
-    #voxel_data = np.transpose(voxel_data, (2, 1, 0)) #Permute X and Z to match dimensions of c++ code (JUST to DEBUG and match logs)
-    #print(voxel_data.shape)
-    #imwrite('Phantom.tif', voxel_data)
-    
-    deformer.set_phantom_voxel_counts(voxel_data.shape[2], voxel_data.shape[1], voxel_data.shape[0]) #Permute X with Z
-    vxl = phantom.get_voxel_mm()
-    deformer.set_phantom_voxel_sizes(vxl[2], vxl[1], vxl[0]) #Permute X with Z
+    parser = argparse.ArgumentParser(description="Volume Deformer XML Reader")
+    parser.add_argument('xml_input', type=str, help='Path to the XML file to read')
 
-    log.basicConfig(filename='VolumeDeformer.log', level=log.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
-    logger = log.getLogger()
+    args = parser.parse_args()
+    if args.xml_input == None:
+        exit
 
-    if not glfw.init():
-        logger.error("Failed to initialize GLFW")
-        raise SystemExit("Failed to initialize GLFW")
+    else:
+        xml = vol.Deformer(args.xml_input)
+        phantom = ph.Phantom(xml.Input_Phantom)
+        deformer = VolumeDeformer()
+        
+        voxel_data = phantom.voxel_data
+        #voxel_data = np.transpose(voxel_data, (2, 1, 0)) #Permute X and Z to match dimensions of c++ code (JUST to DEBUG and match logs)
+        #print(voxel_data.shape)
+        #imwrite('Phantom.tif', voxel_data)
+        
+        deformer.set_phantom_voxel_counts(voxel_data.shape[2], voxel_data.shape[1], voxel_data.shape[0]) #Permute X with Z
+        vxl = phantom.get_voxel_mm()
+        deformer.set_phantom_voxel_sizes(vxl[2], vxl[1], vxl[0]) #Permute X with Z
 
-    glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
-    window = glfw.create_window(800, 600, "Hidden OpenGL Window", None, None)
-    if not window:
-        logger.error("Failed to create GLFW window")
-        glfw.terminate()
-        raise SystemExit("Failed to create GLFW window")
+        log.basicConfig(filename='VolumeDeformer.log', level=log.DEBUG,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
+        logger = log.getLogger()
 
-    glfw.make_context_current(window)
+        if not glfw.init():
+            logger.error("Failed to initialize GLFW")
+            raise SystemExit("Failed to initialize GLFW")
 
-    try:
-        deformer.process(logger, "./meshes/cupC_200ML.feb", "./meshes/cupC_200CC.log", phantom)
-        texture_id = deformer.load_volume(logger, voxel_data)
-        logger.info(f"Loaded volume with texture ID: {texture_id}")
-        deformed_texture_id = deformer.set_volume(logger)
-        logger.info(f"Deformed texture generated with texture ID: {deformed_texture_id}")
-        voxel_data = deformer.draw(logger)
-        phantom.write_vctx(voxel_data, phantom.get_file_name()+"2", deformer.def_mode)
-        logger.info("Deformed phantom successfully written to Phantom.dat")
-    
-    finally:
-        glfw.destroy_window(window)
-        glfw.terminate()
-        logger.info("Processing completed successfully.")
+        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
+        window = glfw.create_window(800, 600, "Hidden OpenGL Window", None, None)
+        if not window:
+            logger.error("Failed to create GLFW window")
+            glfw.terminate()
+            raise SystemExit("Failed to create GLFW window")
+
+        glfw.make_context_current(window)
+
+        try:
+            deformer.process(logger, xml.Input_Mesh, xml.Output_Mesh, phantom)
+            texture_id = deformer.load_volume(logger, voxel_data)
+            logger.info(f"Loaded volume with texture ID: {texture_id}")
+            deformed_texture_id = deformer.set_volume(logger)
+            logger.info(f"Deformed texture generated with texture ID: {deformed_texture_id}")
+            voxel_data = deformer.draw(logger)
+            phantom.write_vctx(voxel_data, xml)
+            logger.info("Deformed phantom successfully written to Phantom.dat")
+        
+        finally:
+            glfw.destroy_window(window)
+            glfw.terminate()
+            logger.info("Processing completed successfully.")
