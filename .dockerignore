@@ -4,3 +4,5 @@
 *_docker
 *_report.xml
 *.exe
+*.zip
+*.npz

@@ -1,6 +1,7 @@
 numpy
 tifffile
 scikit-image
+scipy
 pydicom
 xml-python
 minidom-ext

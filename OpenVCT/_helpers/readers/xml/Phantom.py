@@ -122,6 +122,9 @@ class Phantom:
             'Indices': []
         }
 
+        self.VOIs = []
+        self.Lesions = []
+
         self.def_mode = None
         self.set_phantom()
 
@@ -139,6 +142,7 @@ class Phantom:
         self.voxel_data = np.frombuffer(bytearray(self.voxel_data), dtype=np.uint8).reshape(self.voxel_array['Voxel_Num']['Z'], 
                                                                                             self.voxel_array['Voxel_Num']['Y'], 
                                                                                             self.voxel_array['Voxel_Num']['X'])
+    
     def get_file_name(self):
         return self.file_name
     
@@ -513,6 +517,32 @@ class Phantom:
         ET.SubElement(deforming_station, "OS").text = "Ubuntu 20.04"
         ET.SubElement(deforming_station, "Architecture").text = "AMD64"
 
+        # Add Lesion block
+         # Write VOIs
+        vois_element = ET.SubElement(root, "VOIs")
+        for lesion in self.Lesions:
+            voi_element = ET.SubElement(vois_element, "VOI")
+            ET.SubElement(voi_element, "Center_X").text = str(lesion.get('Center_X', 'N/A'))
+            ET.SubElement(voi_element, "Center_Y").text = str(lesion.get('Center_Y', 'N/A'))
+            ET.SubElement(voi_element, "Center_Z").text = str(lesion.get('Center_Z', 'N/A'))
+            ET.SubElement(voi_element, "Height").text = str(lesion.get('Height', 'N/A'))
+            ET.SubElement(voi_element, "Width").text = str(lesion.get('Width', 'N/A'))
+            ET.SubElement(voi_element, "Depth").text = str(lesion.get('Depth', 'N/A'))
+            ET.SubElement(voi_element, "Has_Lesion").text = str(lesion.get('Has_Lesion', 'true')).lower()
+
+        # Write Lesions
+        lesions_element = ET.SubElement(root, "Lesions")
+        for lesion in self.Lesions:
+            lesion_element = ET.SubElement(lesions_element, "Lesion")
+            ET.SubElement(lesion_element, "LesionName").text = str(lesion.get('LesionName', 'Unknown'))
+            ET.SubElement(lesion_element, "LesionType").text = str(lesion.get('LesionType', 'Unknown'))
+            ET.SubElement(lesion_element, "Center_X").text = str(lesion.get('Center_X', 'N/A'))
+            ET.SubElement(lesion_element, "Center_Y").text = str(lesion.get('Center_Y', 'N/A'))
+            ET.SubElement(lesion_element, "Center_Z").text = str(lesion.get('Center_Z', 'N/A'))
+            ET.SubElement(lesion_element, "Height").text = str(lesion.get('Height', 'N/A'))
+            ET.SubElement(lesion_element, "Width").text = str(lesion.get('Width', 'N/A'))
+            ET.SubElement(lesion_element, "Depth").text = str(lesion.get('Depth', 'N/A'))
+
         # Write the tree to a file
         tree = ET.ElementTree(root)
         tree.write(output_file, encoding='utf-8', xml_declaration=True)
@@ -528,7 +558,7 @@ class Phantom:
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
     
-    def write_vctx(self, out_phantom, xml):
+    def write_vctx(self, out_phantom, xml): # Used in Deformation
         # Temporary directory to extract zip contents
         out_dir = xml.Output_Phantom
         temp_dir = (out_dir.split('/')[-1]).replace('.vctx', '')
@@ -545,6 +575,37 @@ class Phantom:
         # Replace files
         self.write_xml(out_phantom, temp_dir, temp_dir+"/Phantom.xml", "DEFORM_"+xml.View)
         out_phantom.astype('uint8').tofile(temp_dir+"/Phantom.dat")
+        shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomDeformer.xml")
+
+        # Compress files
+        filezip = zip.ZipFile(out_dir, "w")
+        for dirname, subdirs, files in os.walk(temp_dir):
+            filezip.write(dirname)
+            for filename in files:
+                filezip.write(os.path.join(dirname, filename), compress_type=zip.ZIP_DEFLATED)
+        filezip.close()
+            
+        #Clean up the temporary directory
+        shutil.rmtree(temp_dir)
+
+    def write_vctx(self, xml): # Used in Insertion
+        # Temporary directory to extract zip contents
+        out_dir = xml.Output_Phantom
+        temp_dir = (out_dir.split('/')[-1]).replace('.vctx', '')
+    
+        # Create a temporary directory to work in
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir+"/Private")
+
+        # TODO: Fix this. Only works for phantoms with the same name.
+        with zip.ZipFile(self.file_path, mode='r') as filezip:
+            filezip.extract(self.file_name+"/Private/BreastPhantomDeformer.xml", './')           
+            filezip.extract(self.file_name+"/Private/BreastPhantomGenerator.xml", './')
+            filezip.extract(self.file_name+"/Private/XPL_AttenuationTable.xml", './')
+
+        # Replace files
+        self.write_xml(self, temp_dir, temp_dir+"/Phantom.xml")
+        self.voxel_data.astype('uint8').tofile(temp_dir+"/Phantom.dat")
         shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomDeformer.xml")
 
         # Compress files

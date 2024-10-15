@@ -48,10 +48,12 @@ os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/inserter')
 
 xml = ins.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
-                    out_phantom = "vctx/PhantomC.vctx")
+                    out_phantom = "./vctx/PhantomC.vctx",
+                    xml_file = "./xml/PhantomC.xml")
 
-xml.select_lesions(num_lesions = 3, size_mm = [17.5]) # Lesion Selection (random or list), check optional arguments
-xml.write_xml('./xml/PhantomC.xml')
+xml.select_lesions(num_lesions = 3, size_mm = [(6, 6, 3.0)]) # Lesion Selection (random or list), check optional arguments
+xml.insertion_additive()
+# TODO write vctx
 
 #subprocess.call(["python3", "./LesionInserter.py", "./xml/PhantomC.xml"])
 
