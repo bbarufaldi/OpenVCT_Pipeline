@@ -50,7 +50,7 @@ os.chdir('/app/OpenVCT/inserter')
 xml = ins.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
                     out_phantom = "vctx/PhantomC.vctx")
 
-xml.select_lesions(num_lesions=3) # Method to select lesions (random or array), check optional arguments
+xml.select_lesions(num_lesions = 3, size_mm = [17.5]) # Lesion Selection (random or list), check optional arguments
 xml.write_xml('./xml/PhantomC.xml')
 
 #subprocess.call(["python3", "./LesionInserter.py", "./xml/PhantomC.xml"])
@@ -59,11 +59,11 @@ xml.write_xml('./xml/PhantomC.xml')
 os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/raytracing')
 
-# writeProjXML = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
-#                                  phantom_name="../deform/vctx/PhantomC.vctx", # change path to deform to project phantom without lesions
-#                                  folder_name="proj/PhantomC-proj")
+# xml = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
+#                      phantom_name="../deform/vctx/PhantomC.vctx", # change path to deform to project phantom without lesions
+#                      folder_name="proj/PhantomC-proj")
 
-# writeProjXML.write_xml("./xml/PhantomC.xml")
+# xml.write_xml("./xml/PhantomC.xml")
 # subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/PhantomC.xml"])
 
 # 4.2) Change path to Noise Model (Add Noise)

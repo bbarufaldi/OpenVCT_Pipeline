@@ -2,7 +2,11 @@ import xml.etree.ElementTree as ET
 import random
 import zipfile
 import os
+import numpy as np
+
 from xml.dom import minidom
+
+from readers.xml import Phantom as ph
 
 class XMLWriter:
     def __init__(self, in_phantom, out_phantom):
@@ -13,6 +17,10 @@ class XMLWriter:
         self.Output_Phantom = out_phantom
         self.VOIs = []
         self.Lesions = []
+
+        # Get phantom for lesion insertion
+        self.Phantom = ph.Phantom(in_phantom)
+        self.Phantom.set_phantom()
     
     def write_xml(self, output_file):
         root = ET.Element("name")
@@ -64,12 +72,14 @@ class XMLWriter:
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
     
-    def select_lesions(self, num_lesions, lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, db_dir='db/mass'):
+    def select_lesions(self, num_lesions, size_mm, 
+                       lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, db_dir='db/mass'):
         """
         Insert lesions into the Inserter class.
 
         Arguments:
         num_lesions -- number of lesions to insert
+        size_mm -- list of desired sizes per lesion (targeted lesion in mm)
         Optional arguments:
         lesion_names -- list of lesion names
         lesion_types -- list of lesion types
@@ -78,6 +88,9 @@ class XMLWriter:
         db_dir -- path to the directory containing lesion zip files
         """
 
+        if len(size_mm) == 1:
+            size_mm = np.repeat(size_mm[0], num_lesions) # Use the same size for list of lesions
+
         # Load all available zip files from the directory
         lesion_files = [f for f in os.listdir(db_dir) if f.endswith('.zip')]
 
@@ -85,10 +98,11 @@ class XMLWriter:
             raise Exception(f"No lesion zip files found in the directory: {db_dir}")
 
         for i in range(num_lesions):
+            
             # If lesion details are not provided, randomly select a zip file and extract XML data
             if lesion_names is None or i >= len(lesion_names):
                 lesion_file = random.choice(lesion_files)
-                lesion_data = self.read_lesion(os.path.join(db_dir, lesion_file))
+                lesion_data = self.read_lesion(os.path.join(db_dir, lesion_file), size_mm[i])
            
             else:
                 # Use the provided lesion data if available
@@ -115,10 +129,11 @@ class XMLWriter:
                 'Depth': lesion_data['Depth']
             })
 
-    def read_lesion(self, zip_file):
+    def read_lesion(self, zip_file, size_mm):
         """       
         Arguments:
         zip_file -- path to the lesion zip file
+        size_mm -- target size for lesion
         
         Returns:
         lesion_data -- dictionary with lesion details (name, type, size, etc.)
@@ -127,6 +142,16 @@ class XMLWriter:
 
             file = [f for f in zip_ref.namelist() if f.endswith('.raw')][0]
             size = str(file).replace('.raw', '').split('_')[-1].split('x')
+
+            with zip_ref.open(file) as f:
+                map = f.read()
+                map = np.frombuffer(bytearray(map), dtype=np.uint8).reshape(int(size[0]), int(size[1]), int(size[2]))
+
+            vol = self.Phantom.voxel_data
+            vxl = self.Phantom.get_voxel_mm()
+
+            # Resize lesion
+            # Attempt for insertion (check for air and overlap of self.Lesions) - create log
 
             lesion_data = {
                     'LesionName': zip_file,
@@ -138,8 +163,6 @@ class XMLWriter:
                     'Width': int(size[1]),
                     'Depth': int(size[2])
             }
-            # with zip_ref.open(file) as f:
-            #     voxel_data = f.read()
-            #     voxel_data = np.frombuffer(bytearray(voxel_data), dtype=np.uint8).reshape(int(size[0]), int(size[1]), int(size[2]))
+            
                 
         return lesion_data
