@@ -2,10 +2,12 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 class XMLWriter:
-    def __init__(self, config, in_phantom, out_phantom):
+    def __init__(self, config, in_phantom, out_phantom, xml_file):
         self.config = config
         self.in_phantom = in_phantom
         self.out_phantom = out_phantom
+        self.xml_file = xml_file
+        self.write_xml(xml_file)
 
     def prettify(self, elem):
         """Return a pretty-printed XML string for the Element."""

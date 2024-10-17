@@ -231,6 +231,7 @@ int main(int argc, char *argv[])
     }
     
     
+    
     // Declare arguments by name
     std::string attenuationFile;
     std::string configGeomFile;

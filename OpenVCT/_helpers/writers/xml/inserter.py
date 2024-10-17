@@ -1,18 +1,20 @@
 import xml.etree.ElementTree as ET
-import random
+from xml.dom import minidom
+
+from tifffile import imwrite
+import numpy as np
 import zipfile
 import os
-import numpy as np
-
-from xml.dom import minidom
-from scipy.ndimage import zoom
-from tifffile import imwrite
 import logging as log
+from scipy.ndimage import zoom
 
 from readers.xml import Phantom as ph
 
-class XMLWriter:
-    def __init__(self, in_phantom, out_phantom, xml_file):
+class Inserter:
+    def __init__(self, in_phantom, out_phantom, xml_file, 
+                 num_lesions=1, size_mm=[(7, 7, 3)],
+                 lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, db_dir='db/mass'):
+        
         self.Software_Name = "LesionInserter"
         self.Software_Version = "2.0"
         self.Software_ID = "1.0"
@@ -21,16 +23,25 @@ class XMLWriter:
         self.VOIs = []
         self.Lesions = []
 
-        # Get phantom for lesion insertion
-        self.Phantom = ph.Phantom(in_phantom)
-        self.Phantom.set_phantom()
+        self.num_lesions = num_lesions
+        self.size_mm = size_mm
+        self.lesion_names = lesion_names
+        self.lesion_types = lesion_types
+        self.lesion_centers = centers
+        self.bounding_boxes = bounding_boxes
+        self.db_dir = db_dir
 
-        self.xml = xml_file
-
+        self.Phantom = ph.Phantom(self.Input_Phantom)
+        
         # Create a log for insertion
         log.basicConfig(filename='LesionInsertion.log', level=log.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s')
         self.log = log.getLogger()
+
+        self.xml_file = xml_file
+
+        # Check lesions for insertion and 
+        self.select_lesions()
     
     def write_xml(self, output_file):
         root = ET.Element("name")
@@ -82,8 +93,7 @@ class XMLWriter:
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
     
-    def select_lesions(self, num_lesions, size_mm, 
-                       lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, db_dir='db/mass'):
+    def select_lesions(self):
         """
         Insert lesions into the Inserter class.
 
@@ -100,23 +110,23 @@ class XMLWriter:
 
         max_attempts = 10 # insertion will fail if the number of attempts are over max_attemps
 
-        if len(size_mm) == 1:
-            size_mm = np.repeat(size_mm[0], num_lesions) # Use the same size for list of lesions
+        if len(self.size_mm) == 1:
+            self.size_mm = np.repeat(self.size_mm[0], self.num_lesions) # Use the same size for list of lesions
 
         # Load all available zip files from the directory
-        lesion_files = [f for f in os.listdir(db_dir) if f.endswith('.zip')]
+        lesion_files = [f for f in os.listdir(self.db_dir) if f.endswith('.zip')]
 
         if not lesion_files:
-            raise Exception(f"No lesion zip files found in the directory: {db_dir}")
+            raise Exception(f"No lesion zip files found in the directory: {self.db_dir}")
 
         vol = (self.Phantom.voxel_data).astype(bool) # binary phantom
         
-        for i in range(num_lesions):
+        for i in range(self.num_lesions):
             center = None
             shape = None
 
             # If lesion details are not provided, randomly select a zip file and extract XML data
-            if lesion_names is None or i >= len(lesion_names):
+            if (self.lesion_names is None or i >= len(self.lesion_names)):
 
                 attempts = 0  # Initialize attempt counter
                 
@@ -125,16 +135,16 @@ class XMLWriter:
                     self.log.info(f"Attempt {attempts} for lesion {i}")
 
                     # Randomly select a lesion zip file and extract XML data
-                    lesion_file = random.choice(lesion_files)
+                    lesion_file = np.random.choice(lesion_files)
                     self.log.info(f"Lesion selected is {lesion_file}.")
                     
-                    zip = os.path.join(db_dir, lesion_file)
+                    zip = os.path.join(self.db_dir, lesion_file)
                     map = self.read_lesion(zip)
                     map = map.astype(bool)
                     vxl = self.Phantom.get_voxel_mm()
 
                     # Try to insert the lesion at a random position
-                    center, shape, vol = self.attempt_insertion(vol, vxl, map, size_mm[i])
+                    center, shape, vol = self.attempt_insertion(vol, vxl, map, self.size_mm[i])
                     
                     if center is not None:  # Check if insertion was successful
                         self.log.info(f"Lesion successfully inserted at center {center}")
@@ -147,22 +157,22 @@ class XMLWriter:
             else:
                 # Use the provided lesion data if available
                 lesion_data = {
-                    'LesionName': lesion_names[i] if lesion_names and i < len(lesion_names) else None,
-                    'LesionType': lesion_types[i] if lesion_types and i < len(lesion_types) else None,
-                    'Center_X': centers[i][0] if centers and i < len(centers) else None,
-                    'Center_Y': centers[i][1] if centers and i < len(centers) else None,
-                    'Center_Z': centers[i][2] if centers and i < len(centers) else None,
-                    'Height': bounding_boxes[i][0] if bounding_boxes and i < len(bounding_boxes) else None,
-                    'Width': bounding_boxes[i][1] if bounding_boxes and i < len(bounding_boxes) else None,
-                    'Depth': bounding_boxes[i][2] if bounding_boxes and i < len(bounding_boxes) else None,
+                    'LesionName': self.lesion_names[i] if self.lesion_names and i < len(self.lesion_names) else None,
+                    'LesionType': self.lesion_types[i] if self.lesion_types and i < len(self.lesion_types) else None,
+                    'Center_X': self.centers[i][0] if self.centers and i < len(self.centers) else None,
+                    'Center_Y': self.centers[i][1] if self.centers and i < len(self.centers) else None,
+                    'Center_Z': self.centers[i][2] if self.centers and i < len(self.centers) else None,
+                    'Height': self.bounding_boxes[i][0] if self.bounding_boxes and i < len(self.bounding_boxes) else None,
+                    'Width': self.bounding_boxes[i][1] if self.bounding_boxes and i < len(self.bounding_boxes) else None,
+                    'Depth': self.bounding_boxes[i][2] if self.bounding_boxes and i < len(self.bounding_boxes) else None,
                 }
                 center = (lesion_data['Center_X'], lesion_data['Center_Y'], lesion_data['Center_Z'])
                 shape = (lesion_data['Height'], lesion_data['Width'], lesion_data['Depth'])
 
             # Insert lesion into the Lesions list
             self.Lesions.append({
-            'LesionName': zip if lesion_names is None else lesion_names[i],
-            'LesionType': 1 if lesion_types is None else lesion_types[i],
+            'LesionName': zip if self.lesion_names is None else self.lesion_names[i],
+            'LesionType': 1 if self.lesion_types is None else self.lesion_types[i],
             'Center_X': center[0],
             'Center_Y': center[1],
             'Center_Z': center[2],
@@ -171,8 +181,8 @@ class XMLWriter:
             'Depth': shape[2]
             })
 
-            self.write_xml(self.xml)
-            imwrite('binary_vol.tif', vol) # for debug
+        self.write_xml(self.xml_file)
+        imwrite('binary_vol.tif', vol)
 
     def read_lesion(self, zip_file):
         """       
@@ -251,200 +261,3 @@ class XMLWriter:
         #print('random_position', random_position)
         #print('center', center)
         return center, lesion_shape, vol
-
-    def insertion_replacement(self):
-        """
-        Insert lesions into the Phantom by updating only the voxels of the resized lesion mask.
-        
-        For each lesion in `self.Lesions`, this method will:
-        - Read the binary mask of the lesion.
-        - Resize the mask based on the bounding box described in `self.Lesions`.
-        - Replace the corresponding phantom voxels with the new index.
-        """
-
-        # Get the current max index from the phantom's index table
-        max_index = self.Phantom.index_table['Maximum_Index']
-
-        # Loop over each lesion in the self.Lesions list
-        for lesion in self.Lesions:
-            # Increment the max index to create a new index for the lesion
-            new_index = max_index + 1
-            max_index = new_index  # Update the max index
-
-            # Define the new materials for the lesion (as per your example)
-            new_materials = [
-                {
-                    "Material_Name": "Adipose",
-                    "Material_Weight": 0.1,
-                    "Material_Density": 0.93,
-                    "Material_MaterialZ": 204
-                },
-                {
-                    "Material_Name": "Glandular",
-                    "Material_Weight": 0.9,
-                    "Material_Density": 1.02,
-                    "Material_MaterialZ": 205
-                }
-            ]
-
-            # Create the new index entry
-            new_index_entry = {
-                "Index_ID": new_index,
-                "Number_Of_Materials": len(new_materials),
-                "Materials": new_materials
-            }
-
-            # Append the new index to the index table
-            self.Phantom.index_table['Indices'].append(new_index_entry)
-            self.Phantom.index_table['Maximum_Index'] = max_index
-
-            # Get the lesion's center and size (bounding box)
-            center = np.array([lesion['Center_X'], lesion['Center_Y'], lesion['Center_Z']])
-            size = np.array([lesion['Height'], lesion['Width'], lesion['Depth']])
-
-            # Calculate the bounds for the lesion within the phantom
-            min_bounds = np.floor(center - size / 2).astype(int)  # Starting voxel position
-            max_bounds = np.ceil(center + size / 2).astype(int)  # Ending voxel position
-
-            # Read the lesion mask from the zip file (assuming lesion['LesionName'] is the zip path)
-            lesion_mask = self.read_lesion(lesion['LesionName'])
-
-            # Resize the lesion mask to match the bounding box in the phantom
-            lesion_shape = lesion_mask.shape
-            target_shape = (max_bounds[2] - min_bounds[2], max_bounds[1] - min_bounds[1], max_bounds[0] - min_bounds[0])
-            scaling_factors = np.array(target_shape) / np.array(lesion_shape)
-            resized_lesion_mask = zoom(lesion_mask.astype(float), scaling_factors, order=1) > 0.5  # Resizing the lesion mask
-
-            # Update only the voxels of the phantom that correspond to the resized lesion mask
-            phantom_region = self.Phantom.voxel_data[min_bounds[0]:max_bounds[0],
-                                                    min_bounds[1]:max_bounds[1],
-                                                    min_bounds[2]:max_bounds[2]]
-
-            # Replace voxels in the phantom where the resized lesion mask is True
-            phantom_region[resized_lesion_mask] = new_index
-
-            # Update the phantom's voxel data with the modified region
-            self.Phantom.voxel_data[min_bounds[0]:max_bounds[0],
-                                    min_bounds[1]:max_bounds[1],
-                                    min_bounds[2]:max_bounds[2]] = phantom_region
-
-        imwrite('phantom.tif', self.Phantom.voxel_data)
-        # Log or return a message indicating completion of the insertion
-        self.log.info("Lesion insertion and index table update completed.")
-
-    def insertion_additive(self):
-        """
-        Insert lesions into the Phantom by updating voxels with a new index that combines
-        current materials and the Glandular material, while maintaining the sum of weights = 1.0.
-        
-        This method ensures that indices are not repeated: if an index with the same material composition
-        already exists, it will reuse that index instead of creating a new one.
-        """
-        current_max_index = self.Phantom.index_table['Maximum_Index']
-
-        # Method to compare material compositions
-        def find_existing_index(materials):
-            for index_entry in self.Phantom.index_table['Indices']:
-                existing_materials = index_entry['Materials']
-                if len(existing_materials) == len(materials):
-                    match = all(
-                        any(
-                            existing['Material_Name'] == new['Material_Name'] and
-                            abs(existing['Material_Weight'] - new['Material_Weight']) < 1e-6  # Floating-point tolerance
-                            for existing in existing_materials
-                        ) for new in materials
-                    )
-                    if match:
-                        return index_entry['Index_ID']
-            return None
-
-        # Loop over each lesion in the self.Lesions list
-        for lesion in self.Lesions:
-            # Get the lesion's center and size (bounding box)
-            center = np.array([lesion['Center_X'], lesion['Center_Y'], lesion['Center_Z']])
-            size = np.array([lesion['Height'], lesion['Width'], lesion['Depth']])
-
-            # Calculate the bounds for the lesion within the phantom
-            min_bounds = np.floor(center - size / 2).astype(int)  # Starting voxel position
-            max_bounds = np.ceil(center + size / 2).astype(int)  # Ending voxel position
-
-            # Read the lesion mask from the zip file
-            lesion_mask = self.read_lesion(lesion['LesionName'])
-
-            # Resize the lesion mask to match the bounding box in the phantom
-            lesion_shape = lesion_mask.shape
-            target_shape = (max_bounds[0] - min_bounds[0], max_bounds[1] - min_bounds[1], max_bounds[2] - min_bounds[2])
-            scaling_factors = np.array(target_shape) / np.array(lesion_shape)
-            resized_lesion_mask = zoom(lesion_mask.astype(float), scaling_factors, order=1) > 0.5  # Resizing the lesion mask
-
-            # Get the affected region in the phantom
-            phantom_region = self.Phantom.voxel_data[min_bounds[0]:max_bounds[0],
-                                                    min_bounds[1]:max_bounds[1],
-                                                    min_bounds[2]:max_bounds[2]]
-
-            # Find the indices where the lesion will affect the phantom
-            affected_voxels = np.where(resized_lesion_mask)
-
-            # Iterate over affected voxels directly
-            for idx in range(len(affected_voxels[0])):
-                x = affected_voxels[0][idx]
-                y = affected_voxels[1][idx]
-                z = affected_voxels[2][idx]
-
-                # Get the current index at the voxel (x, y, z)
-                current_index = phantom_region[x, y, z]
-                current_materials = self.Phantom.index_table['Indices'][current_index]['Materials']
-
-                # Reduce the weight of the current materials by 0.1 (while keeping total weight = 1.0)
-                updated_materials = []
-                total_weight_reduction = 0.1
-
-                for material in current_materials:
-                    reduced_weight = material['Material_Weight'] - total_weight_reduction / len(current_materials)
-                    updated_materials.append({
-                        "Material_Name": material['Material_Name'],
-                        "Material_Weight": max(0, reduced_weight),  # Ensure weight doesn't go below 0
-                        "Material_Density": material['Material_Density'],
-                        "Material_MaterialZ": material['Material_MaterialZ']
-                    })
-
-                # Add Glandular material with a weight of 0.1
-                updated_materials.append({
-                    "Material_Name": "Glandular",
-                    "Material_Weight": 0.1,
-                    "Material_Density": 1.02,
-                    "Material_MaterialZ": 205
-                })
-
-                # Check if this material composition already exists
-                existing_index = find_existing_index(updated_materials)
-                if existing_index is not None:
-                    new_index = existing_index  # Reuse the existing index
-                else:
-                    # Create a new index for this material composition
-                    new_index = current_max_index + 1
-                    current_max_index = new_index
-
-                    # Create the new index entry
-                    new_index_entry = {
-                        "Index_ID": new_index,
-                        "Number_Of_Materials": len(updated_materials),
-                        "Materials": updated_materials
-                    }
-
-                    # Append the new index to the index table
-                    self.Phantom.index_table['Indices'].append(new_index_entry)
-                    self.Phantom.index_table['Maximum_Index'] = current_max_index
-
-                # Update the phantom voxel data at this position with the new index
-                phantom_region[x, y, z] = new_index
-
-                # Update the phantom's voxel data with the modified region
-                self.Phantom.voxel_data[min_bounds[0]:max_bounds[0],
-                                        min_bounds[1]:max_bounds[1],
-                                        min_bounds[2]:max_bounds[2]] = phantom_region
-
-        # Log or return a message indicating completion of the insertion
-        self.log.info("Additive lesion insertion with index reuse completed.")
-        # print(self.Phantom.index_table)
-        # imwrite('phantom.tif', self.Phantom.voxel_data)

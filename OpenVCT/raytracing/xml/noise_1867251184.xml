@@ -3,8 +3,8 @@
   <Projector_Config>
     <Program_Name>BreastPhantomRayTracingProjector</Program_Name>
     <Software_Version>2.0</Software_Version>
-    <Input_Phantom>vctx/noise_1867251184_crop.vctx</Input_Phantom>
-    <Output_Folder>proj/noise_1867251184_crop-proj</Output_Folder>
+    <Input_Phantom>./vctx/noise_1867251184_crop.vctx</Input_Phantom>
+    <Output_Folder>proj/PhantomC-proj</Output_Folder>
     <Has_Noise>False</Has_Noise>
     <Has_Invsq>True</Has_Invsq>
     <Elec_Noise>3.0</Elec_Noise>

@@ -449,7 +449,6 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
 
       if (err != CL_SUCCESS) throw build_string("Creating lengthBuffer, line " << __LINE__ << ": lengthBuffer err value is: " << err);
 
-
       std::vector<cl_float> invSq(machine->getDetector()->elementCountX);
       cl::Buffer invSquaredBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                   invSq.size()*sizeof(cl_float), &invSq.at(0), &err);
@@ -550,8 +549,8 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
       double qElSizeY = 0.5 *machine->getDetector()->elementsizeY;
       cl_int randomize = (cl_int)(Acquisition::randomize_element_quad == true);
 
-      /* //DEBUG
-      std::cout << "Size Arguments"<< std::endl;
+      //DEBUG
+      /*std::cout << "Size Arguments"<< std::endl;
       std::cout << "detectorBuffer: " << detectorPositions.size() << std::endl;
       std::cout << "source[0]: " << source.s[0] << std::endl;
       std::cout << "source[1]: " << source.s[1] << std::endl;
@@ -569,8 +568,7 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
       std::cout << "qElSizeY: " << qElSizeY << std::endl;
       std::cout << "detectorPosition[0]: " << detectorPosition.s[0] << std::endl;
       std::cout << "detectorPosition[1]: " << detectorPosition.s[1] << std::endl;
-      std::cout << "detectorPosition[2]: " << detectorPosition.s[2] << std::endl;
-      */
+      std::cout << "detectorPosition[2]: " << detectorPosition.s[2] << std::endl;*/
 
       err = traceKernel.setArg(0, detectorBuffer);                    if (err != CL_SUCCESS) throw build_string("trace arg 0, detectorBuffer: " << err);
       err = traceKernel.setArg(1, source);                            if (err != CL_SUCCESS) throw build_string("trace arg 1, source: " << err);
@@ -587,7 +585,6 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
       err = traceKernel.setArg(10, (cl_int)numMatLbls);               if (err != CL_SUCCESS) throw build_string("trace arg 11, numMatLbls: " << err);
       err = traceKernel.setArg(11, (cl_int)randomize);                if (err != CL_SUCCESS) throw build_string("trace arg 12, randomize: " << err);
       err = traceKernel.setArg(12, detectorPosition);                 if (err != CL_SUCCESS) throw build_string("trace arg 13, detector positions: " << err);
-
 
       ////////////////////
       // Set up physics //
@@ -837,7 +834,6 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
       err = physicsKernel.setArg(12, labMatOffsBuffer);                  if (err != CL_SUCCESS) throw build_string("physics arg 12 labMatOffs: " << err);
       err = physicsKernel.setArg(13, numLabMatsBuffer);                  if (err != CL_SUCCESS) throw build_string("physics arg 13 numLabMats: " << err);
 
-
       // Noise is no longer handled in OpenCL
       // Set up noise kernel arguments
       /*
@@ -951,6 +947,7 @@ bool SimulationOCL::process(signed short acqID, int id, Image<double> *outImage)
                          &labMatOffs[0], &numLabMats[0]);
              }
          #else
+         
          
          //std::cout << "Line " << __LINE__ << " About to enqueueNDRangeKernel" << std::endl;
 

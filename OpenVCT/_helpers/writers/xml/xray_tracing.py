@@ -2,10 +2,12 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 class XMLWriter:
-    def __init__(self, config, phantom_name, folder_name):
+    def __init__(self, config, phantom_name, folder_name, xml_file):
         self.config = config
         self.phantom_name = phantom_name
         self.folder_name = folder_name
+        self.xml_file = xml_file
+        self.write_xml(xml_file)
 
     def prettify(self, elem):
         """Fix XML identation string for the Element."""

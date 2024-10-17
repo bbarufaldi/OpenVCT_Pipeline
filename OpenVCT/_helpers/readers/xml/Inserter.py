@@ -31,12 +31,12 @@ class Inserter:
         self.VOIs = []
         for voi in vois.findall('VOI'):
             self.VOIs.append({
-                'Center_X': float(voi.find('Center_X').text),
-                'Center_Y': float(voi.find('Center_Y').text),
-                'Center_Z': float(voi.find('Center_Z').text),
-                'Height': float(voi.find('Height').text),
-                'Width': float(voi.find('Width').text),
-                'Depth': float(voi.find('Depth').text),
+                'Center_X': int(voi.find('Center_X').text),
+                'Center_Y': int(voi.find('Center_Y').text),
+                'Center_Z': int(voi.find('Center_Z').text),
+                'Height': int(voi.find('Height').text),
+                'Width': int(voi.find('Width').text),
+                'Depth': int(voi.find('Depth').text),
                 'Has_Lesion': voi.find('Has_Lesion').text == 'true'
             })
 
@@ -47,10 +47,10 @@ class Inserter:
             self.Lesions.append({
                 'LesionName': lesion.find('LesionName').text,
                 'LesionType': int(lesion.find('LesionType').text),
-                'Center_X': float(voi.find('Center_X').text),
-                'Center_Y': float(voi.find('Center_Y').text),
-                'Center_Z': float(voi.find('Center_Z').text),
-                'Height': float(voi.find('Height').text),
-                'Width': float(voi.find('Width').text),
-                'Depth': float(voi.find('Depth').text)
+                'Center_X': int(lesion.find('Center_X').text),
+                'Center_Y': int(lesion.find('Center_Y').text),
+                'Center_Z': int(lesion.find('Center_Z').text),
+                'Height': int(lesion.find('Height').text),
+                'Width': int(lesion.find('Width').text),
+                'Depth': int(lesion.find('Depth').text)
             })

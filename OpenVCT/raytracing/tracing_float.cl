@@ -267,7 +267,7 @@ __kernel void physics(int kVp_x2_m1,                          // 0 kilovolts, pe
     {
         // Declare and Initialize SumUT
         float sumUT[128];  // 100 is kVp*2 for mammography spectra w/0.5 kV steps
-        for(int ndx=0; ndx<127; ndx++)  sumUT[ndx] = 0.0f;  // initialize the array
+        for(int ndx=0; ndx<kVp_x2_m1; ndx++)  sumUT[ndx] = 0.0f;  // initialize the array
 
         // Calculate the sum over the materials in the x-ray path of
         // mass_attn * density * thickness for each energy bin

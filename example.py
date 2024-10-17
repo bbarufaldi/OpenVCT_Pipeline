@@ -28,45 +28,49 @@ import os
 # 1) Change path to Generation
 os.chdir('/app/OpenVCT/anatomy')
 
-# xml = gen.XMLWriter(config=breast.BreastConfig.CUP_C, 
-#                           phantom_name="PhantomC")
-# xml.write_xml("./xml/PhantomC.xml")
-# subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", "./xml/PhantomC.xml"])
+xml = gen.XMLWriter(config=breast.BreastConfig.CUP_C, 
+                    phantom_name="PhantomC",
+                    xml_file = "./xml/PhantomC.xml")
+
+subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", xml.xml_file])
 
 # 2) Change path to Deformation
 os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/deform')
 
-# xml = defo.XMLWriter(config=deform.DeformerConfig.CUPC_CC, 
-#                              in_phantom = "../anatomy/vctx/PhantomC.vctx",
-#                              out_phantom = "./vctx/PhantomC.vctx")
-# xml.write_xml("./xml/PhantomC.xml")
-# subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", "./xml/PhantomC.xml"])
+xml = defo.XMLWriter(config=deform.DeformerConfig.CUPC_CC, 
+                     in_phantom = "../anatomy/vctx/PhantomC.vctx",
+                     out_phantom = "./vctx/PhantomC.vctx",
+                     xml_file = "./xml/PhantomC.xml")
+
+subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", xml.xml_file])
 
 # 3) Change path to Lesion Inserter
 os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/inserter')
 
-xml = ins.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
-                    out_phantom = "./vctx/PhantomC.vctx",
-                    xml_file = "./xml/PhantomC.xml")
+# Additional (optional) parameters available. Check constructor for details
+xml = ins.Inserter(in_phantom = "../deform/vctx/PhantomC.vctx",
+                   out_phantom = "./vctx/PhantomC.vctx",
+                   xml_file = "./xml/PhantomC.xml",
+                   num_lesions = 30,
+                   size_mm = [(2, 2, 2)],
+                   db_dir='db/cluster'
+                   ) 
 
-xml.select_lesions(num_lesions = 3, size_mm = [(6, 6, 3.0)]) # Lesion Selection (random or list), check optional arguments
-xml.insertion_additive()
-# TODO write vctx
-
-#subprocess.call(["python3", "./LesionInserter.py", "./xml/PhantomC.xml"])
+subprocess.call(["python3", "./LesionInserter.py", xml.xml_file])
 
 # 4.1) Change path to Ray Tracing (Noiseless Model)
 os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT/raytracing')
 
-# xml = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
-#                      phantom_name="../deform/vctx/PhantomC.vctx", # change path to deform to project phantom without lesions
-#                      folder_name="proj/PhantomC-proj")
+xml = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
+                     phantom_name="../inserter/vctx/PhantomC.vctx", # change path to deform to project phantom without lesions
+                     folder_name="proj/PhantomC-proj",
+                     xml_file = "./xml/PhantomC.xml"
+                     )
 
-# xml.write_xml("./xml/PhantomC.xml")
-# subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", "./xml/PhantomC.xml"])
+subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", xml.xml_file])
 
 # 4.2) Change path to Noise Model (Add Noise)
 os.chdir(os.environ['HOME'])

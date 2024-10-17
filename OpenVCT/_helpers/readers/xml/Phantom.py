@@ -121,6 +121,57 @@ class Phantom:
             'Number_of_Indicies': None,
             'Indices': []
         }
+        self.deformation = {
+            'Sequence_Number': None,
+            'Deformation_Type': None,
+            'Deformation_Mode': None,
+            'Deformation_Thickness': None,
+            'Date_Deformed': {
+                'Year': None,
+                'Month': None,
+                'Day': None
+            },
+            'Time_Deformed': {
+                'Hour': None,
+                'Minute': None,
+                'Seconds': None,
+                'Fraction': None,
+                'UTC_Offset': None
+            },
+            'Deforming_Organization': {
+                'Name': None,
+                'Division': None,
+                'Department': None,
+                'Group': None,
+                'Institution_Code_Sequence': None,
+                'Country': None,
+                'State': None,
+                'City': None,
+                'Zip': None
+            },
+            'Deforming_Software': {
+                'Name': None,
+                'Version': None,
+                'Repository': None,
+                'Build_Date': {
+                    'Year': None,
+                    'Month': None,
+                    'Day': None
+                },
+                'Build_Time': {
+                    'Hour': None,
+                    'Minute': None,
+                    'Seconds': None,
+                    'Fraction': None,
+                    'UTC_Offset': None
+                }
+            },
+            'Deforming_Station': {
+                'Name': None,
+                'OS': None,
+                'Architecture': None
+            }
+        }
 
         self.VOIs = []
         self.Lesions = []
@@ -129,8 +180,6 @@ class Phantom:
         self.set_phantom()
 
     def set_phantom(self):
-        xml = None
-
         with zip.ZipFile(self.file_path, mode='r') as filezip:
             with filezip.open(self.file_name+"/Phantom.dat") as file:
                 self.voxel_data = file.read()
@@ -302,22 +351,112 @@ class Phantom:
             'Indices': []
         }
 
+        # Parsing each Index
         for index in index_table_element.findall("Index"):
-            materials = []
-            for material in index.find("Materials").findall("Material"):
-                materials.append({
+            index_data = {
+                "Index_ID": int(index.find("Index_ID").text),
+                "Number_Of_Materials": int(index.find("Number_Of_Materials").text),
+                "Materials": []
+            }
+
+            # Parsing materials within each index
+            materials = index.find("Materials")
+            for material in materials.findall("Material"):
+                material_data = {
                     "Material_Name": material.find("Material_Name").text,
                     "Material_Weight": float(material.find("Material_Weight").text),
                     "Material_Density": float(material.find("Material_Density").text),
                     "Material_MaterialZ": int(material.find("Material_MaterialZ").text)
-                })
-            self.index_table['Indices'].append({
-                "Index_ID": int(index.find("Index_ID").text),
-                "Number_Of_Materials": int(index.find("Number_Of_Materials").text),
-                "Materials": materials
-            })
+                }
+                index_data["Materials"].append(material_data)
 
-    def write_xml(self, out_phantom, out_name, output_file, def_mode):
+            self.index_table['Indices'].append(index_data)
+
+        # Parsing Deformation block
+        deformation_element = root.find("Deformation")
+        if deformation_element is not None:
+            self.deformation = {
+                'Sequence_Number': int(deformation_element.find("Sequence_Number").text),
+                'Deformation_Type': deformation_element.find("Deformation_Type").text,
+                'Deformation_Mode': deformation_element.find("Deformation_Mode").text,
+                'Deformation_Thickness': deformation_element.find("Deformation_Thickness").text,
+                'Date_Deformed': {
+                    'Year': int(deformation_element.find("Date_Deformed/Year").text),
+                    'Month': int(deformation_element.find("Date_Deformed/Month").text),
+                    'Day': int(deformation_element.find("Date_Deformed/Day").text)
+                },
+                'Time_Deformed': {
+                    'Hour': int(deformation_element.find("Time_Deformed/Hour").text),
+                    'Minute': int(deformation_element.find("Time_Deformed/Minute").text),
+                    'Seconds': int(deformation_element.find("Time_Deformed/Seconds").text),
+                    'Fraction': int(deformation_element.find("Time_Deformed/Fraction").text),
+                    'UTC_Offset': int(deformation_element.find("Time_Deformed/UTC_Offset").text)
+                },
+                'Deforming_Organization': {
+                    'Name': deformation_element.find("Deforming_Organization/Name").text,
+                    'Division': deformation_element.find("Deforming_Organization/Division").text,
+                    'Department': deformation_element.find("Deforming_Organization/Department").text,
+                    'Group': deformation_element.find("Deforming_Organization/Group").text,
+                    'Institution_Code_Sequence': deformation_element.find("Deforming_Organization/Institution_Code_Sequence").text,
+                    'Country': deformation_element.find("Deforming_Organization/Country").text,
+                    'State': deformation_element.find("Deforming_Organization/State").text,
+                    'City': deformation_element.find("Deforming_Organization/City").text,
+                    'Zip': deformation_element.find("Deforming_Organization/Zip").text
+                },
+                'Deforming_Software': {
+                    'Name': deformation_element.find("Deforming_Software/Name").text,
+                    'Version': deformation_element.find("Deforming_Software/Version").text,
+                    'Repository': deformation_element.find("Deforming_Software/Repository").text,
+                    'Build_Date': {
+                        'Year': int(deformation_element.find("Deforming_Software/Build_Date/Year").text),
+                        'Month': int(deformation_element.find("Deforming_Software/Build_Date/Month").text),
+                        'Day': int(deformation_element.find("Deforming_Software/Build_Date/Day").text)
+                    },
+                    'Build_Time': {
+                        'Hour': int(deformation_element.find("Deforming_Software/Build_Time/Hour").text),
+                        'Minute': int(deformation_element.find("Deforming_Software/Build_Time/Minute").text),
+                        'Seconds': int(deformation_element.find("Deforming_Software/Build_Time/Seconds").text),
+                        'Fraction': int(deformation_element.find("Deforming_Software/Build_Time/Fraction").text),
+                        'UTC_Offset': int(deformation_element.find("Deforming_Software/Build_Time/UTC_Offset").text)
+                    }
+                },
+                'Deforming_Station': {
+                    'Name': deformation_element.find("Deforming_Station/Name").text,
+                    'OS': deformation_element.find("Deforming_Station/OS").text,
+                    'Architecture': deformation_element.find("Deforming_Station/Architecture").text
+                }
+            }
+
+        # Reading VOIs
+        vois = root.find('VOIs')
+        if vois is not None:
+            for voi in vois.findall('VOI'):
+                self.VOIs.append({
+                    'Center_X': int(voi.find('Center_X').text),
+                    'Center_Y': int(voi.find('Center_Y').text),
+                    'Center_Z': int(voi.find('Center_Z').text),
+                    'Height': int(voi.find('Height').text),
+                    'Width': int(voi.find('Width').text),
+                    'Depth': int(voi.find('Depth').text),
+                    'Has_Lesion': voi.find('Has_Lesion').text == 'true'
+                })
+
+        # Reading Lesions
+        lesions = root.find('Lesions')
+        if lesions is not None:
+            for lesion in lesions.findall('Lesion'):
+                self.Lesions.append({
+                    'LesionName': lesion.find('LesionName').text,
+                    'LesionType': int(lesion.find('LesionType').text),
+                    'Center_X': int(lesion.find('Center_X').text),
+                    'Center_Y': int(lesion.find('Center_Y').text),
+                    'Center_Z': int(lesion.find('Center_Z').text),
+                    'Height': int(lesion.find('Height').text),
+                    'Width': int(lesion.find('Width').text),
+                    'Depth': int(lesion.find('Depth').text)
+                })
+
+    def write_xml(self, out_phantom, out_name, output_file, xml=None):
         """Writes the stored information back to an XML file."""
 
         root = ET.Element("VCT_Phantom")
@@ -337,8 +476,8 @@ class Phantom:
 
         # Thickness_mm information
         thickness_mm = ET.SubElement(root, "Thickness_mm")
-        ET.SubElement(thickness_mm, "X").text = str(out_phantom.shape[1]*self.get_voxel_mm()[1])
-        ET.SubElement(thickness_mm, "Y").text = str(out_phantom.shape[2]*self.get_voxel_mm()[2])
+        ET.SubElement(thickness_mm, "X").text = str(out_phantom.shape[2]*self.get_voxel_mm()[2]) if xml == None else str(out_phantom.shape[1]*self.get_voxel_mm()[1])
+        ET.SubElement(thickness_mm, "Y").text = str(out_phantom.shape[1]*self.get_voxel_mm()[1]) if xml == None else str(out_phantom.shape[2]*self.get_voxel_mm()[2])
         ET.SubElement(thickness_mm, "Z").text = str(out_phantom.shape[0]*self.get_voxel_mm()[0])
 
         # Glandular Count TODO: UPDATE THIS FIELD
@@ -422,13 +561,13 @@ class Phantom:
         voxel_array = ET.SubElement(root, "Voxel_Array")
         ET.SubElement(voxel_array, "Voxel_Array_UID").text = self.voxel_array['UID']
         voxel_num = ET.SubElement(voxel_array, "VOXEL_NUM")
-        ET.SubElement(voxel_num, "X").text = str(out_phantom.shape[1])
-        ET.SubElement(voxel_num, "Y").text = str(out_phantom.shape[2])
+        ET.SubElement(voxel_num, "X").text = str(out_phantom.shape[2]) if xml == None else str(out_phantom.shape[1])
+        ET.SubElement(voxel_num, "Y").text = str(out_phantom.shape[1]) if xml == None else str(out_phantom.shape[2])
         ET.SubElement(voxel_num, "Z").text = str(out_phantom.shape[0])
         
         voxel_size_mm = ET.SubElement(voxel_array, "VOXEL_SIZE_MM")
-        ET.SubElement(voxel_size_mm, "X").text = str(self.get_voxel_mm()[1])
-        ET.SubElement(voxel_size_mm, "Y").text = str(self.get_voxel_mm()[2])
+        ET.SubElement(voxel_size_mm, "X").text = str(self.get_voxel_mm()[2])
+        ET.SubElement(voxel_size_mm, "Y").text = str(self.get_voxel_mm()[1])
         ET.SubElement(voxel_size_mm, "Z").text = str(self.get_voxel_mm()[0])
         ET.SubElement(voxel_array, "VOXEL_ARRAY_ORDER").text = self.voxel_array['Voxel_Array_Order']
         ET.SubElement(voxel_array, "VOXEL_TYPE").text = self.voxel_array['Voxel_Type']
@@ -443,8 +582,8 @@ class Phantom:
         # Index_Table information
         index_table = ET.SubElement(root, "Index_Table")
         ET.SubElement(index_table, "Index_Table_UID").text = self.index_table['Index_Table_UID']
-        ET.SubElement(index_table, "Maximum_Index").text = str(self.index_table['Maximum_Index'])
-        ET.SubElement(index_table, "Number_of_Indicies").text = str(self.index_table['Number_of_Indicies'])
+        ET.SubElement(index_table, "Maximum_Index").text = str(int(self.index_table['Maximum_Index'])*2) # BUG: Fix this doubling the number of Indices to increase buffer size
+        ET.SubElement(index_table, "Number_of_Indicies").text = str(int(self.index_table['Number_of_Indicies'])*2-1) # BUG: Fix this doubling the number of Indices to increase buffer size
 
         for index in self.index_table['Indices']:
             index_element = ET.SubElement(index_table, "Index")
@@ -457,25 +596,37 @@ class Phantom:
                 ET.SubElement(material_element, "Material_Weight").text = str(material['Material_Weight'])
                 ET.SubElement(material_element, "Material_Density").text = str(material['Material_Density'])
                 ET.SubElement(material_element, "Material_MaterialZ").text = str(material['Material_MaterialZ'])
+        
+        # BUG: Fix this doubling the number of Indices to increase buffer size
+        for i in range(int(self.index_table['Maximum_Index'])+1, int(self.index_table['Maximum_Index']*2+1)):
+            index_element = ET.SubElement(index_table, "Index")
+            ET.SubElement(index_element, "Index_ID").text = str(i)
+            ET.SubElement(index_element, "Number_Of_Materials").text = str(1)
+            materials = ET.SubElement(index_element, "Materials")
+            material_element = ET.SubElement(materials, "Material")
+            ET.SubElement(material_element, "Material_Name").text = "Air"
+            ET.SubElement(material_element, "Material_Weight").text = "1.0"
+            ET.SubElement(material_element, "Material_Density").text = "0.0012"
+            ET.SubElement(material_element, "Material_MaterialZ").text = "201"          
 
         # Add Deformation block
         deformation = ET.SubElement(root, "Deformation")
-        ET.SubElement(deformation, "Sequence_Number").text = "0"
-        ET.SubElement(deformation, "Deformation_Type").text = "FINITE_ELEMENT"
-        ET.SubElement(deformation, "Deformation_Mode").text = def_mode
+        ET.SubElement(deformation, "Sequence_Number").text = str(self.deformation['Sequence_Number']) if None else "0"
+        ET.SubElement(deformation, "Deformation_Type").text = self.deformation['Deformation_Type'] if None else "FINITE_ELEMENT"
+        ET.SubElement(deformation, "Deformation_Mode").text = self.deformation['Deformation_Mode'] if xml==None else "DEFORM_"+ xml.View
         ET.SubElement(deformation, "Deformation_Thickness").text = "TODO"
 
-        # Add current Date_Deformed
+        # Add Date_Deformed
         date_deformed = ET.SubElement(deformation, "Date_Deformed")
-        ET.SubElement(date_deformed, "Year").text = str(current_time.year)
-        ET.SubElement(date_deformed, "Month").text = f"{current_time.month:02d}"  # Zero-padded month
-        ET.SubElement(date_deformed, "Day").text = f"{current_time.day:02d}"  # Zero-padded day
+        ET.SubElement(date_deformed, "Year").text = str(self.deformation['Date_Deformed']['Year']) if None else str(current_time.year)
+        ET.SubElement(date_deformed, "Month").text = f"{self.deformation['Date_Deformed']['Month']:02d}" if None else f"{current_time.month:02d}"  # Zero-padded month
+        ET.SubElement(date_deformed, "Day").text = f"{self.deformation['Date_Deformed']['Day']:02d}" if None else f"{current_time.day:02d}"  # Zero-padded day
 
-        # Add current Time_Deformed
+        # Add Time_Deformed
         time_deformed = ET.SubElement(deformation, "Time_Deformed")
-        ET.SubElement(time_deformed, "Hour").text = f"{current_time.hour:02d}"  # Zero-padded hour
-        ET.SubElement(time_deformed, "Minute").text = f"{current_time.minute:02d}"  # Zero-padded minute
-        ET.SubElement(time_deformed, "Seconds").text = f"{current_time.second:02d}"  # Zero-padded seconds
+        ET.SubElement(time_deformed, "Hour").text = f"{self.deformation['Time_Deformed']['Hour']:02d}" if None else f"{current_time.hour:02d}"  # Zero-padded hour
+        ET.SubElement(time_deformed, "Minute").text = f"{self.deformation['Time_Deformed']['Minute']:02d}" if None else f"{current_time.minute:02d}"  # Zero-padded minute
+        ET.SubElement(time_deformed, "Seconds").text = f"{self.deformation['Time_Deformed']['Seconds']:02d}" if None else f"{current_time.second:02d}"  # Zero-padded seconds
         ET.SubElement(time_deformed, "Fraction").text = "0000"  # Keeping the fraction static
         ET.SubElement(time_deformed, "UTC_Offset").text = "-5"  # Adjust for your timezone
 
@@ -517,31 +668,30 @@ class Phantom:
         ET.SubElement(deforming_station, "OS").text = "Ubuntu 20.04"
         ET.SubElement(deforming_station, "Architecture").text = "AMD64"
 
-        # Add Lesion block
-         # Write VOIs
-        vois_element = ET.SubElement(root, "VOIs")
-        for lesion in self.Lesions:
-            voi_element = ET.SubElement(vois_element, "VOI")
-            ET.SubElement(voi_element, "Center_X").text = str(lesion.get('Center_X', 'N/A'))
-            ET.SubElement(voi_element, "Center_Y").text = str(lesion.get('Center_Y', 'N/A'))
-            ET.SubElement(voi_element, "Center_Z").text = str(lesion.get('Center_Z', 'N/A'))
-            ET.SubElement(voi_element, "Height").text = str(lesion.get('Height', 'N/A'))
-            ET.SubElement(voi_element, "Width").text = str(lesion.get('Width', 'N/A'))
-            ET.SubElement(voi_element, "Depth").text = str(lesion.get('Depth', 'N/A'))
-            ET.SubElement(voi_element, "Has_Lesion").text = str(lesion.get('Has_Lesion', 'true')).lower()
+        # # Add VOIs block
+        # vois_element = ET.SubElement(root, "VOIs")
+        # for voi in self.VOIs:
+        #     voi_element = ET.SubElement(vois_element, "VOI")
+        #     ET.SubElement(voi_element, "Center_X").text = str(voi.get('Center_X', 'N/A'))
+        #     ET.SubElement(voi_element, "Center_Y").text = str(voi.get('Center_Y', 'N/A'))
+        #     ET.SubElement(voi_element, "Center_Z").text = str(voi.get('Center_Z', 'N/A'))
+        #     ET.SubElement(voi_element, "Height").text = str(voi.get('Height', 'N/A'))
+        #     ET.SubElement(voi_element, "Width").text = str(voi.get('Width', 'N/A'))
+        #     ET.SubElement(voi_element, "Depth").text = str(voi.get('Depth', 'N/A'))
+        #     ET.SubElement(voi_element, "Has_Lesion").text = str(voi.get('Has_Lesion', 'true')).lower()
 
-        # Write Lesions
-        lesions_element = ET.SubElement(root, "Lesions")
-        for lesion in self.Lesions:
-            lesion_element = ET.SubElement(lesions_element, "Lesion")
-            ET.SubElement(lesion_element, "LesionName").text = str(lesion.get('LesionName', 'Unknown'))
-            ET.SubElement(lesion_element, "LesionType").text = str(lesion.get('LesionType', 'Unknown'))
-            ET.SubElement(lesion_element, "Center_X").text = str(lesion.get('Center_X', 'N/A'))
-            ET.SubElement(lesion_element, "Center_Y").text = str(lesion.get('Center_Y', 'N/A'))
-            ET.SubElement(lesion_element, "Center_Z").text = str(lesion.get('Center_Z', 'N/A'))
-            ET.SubElement(lesion_element, "Height").text = str(lesion.get('Height', 'N/A'))
-            ET.SubElement(lesion_element, "Width").text = str(lesion.get('Width', 'N/A'))
-            ET.SubElement(lesion_element, "Depth").text = str(lesion.get('Depth', 'N/A'))
+        # # Write Lesions
+        # lesions_element = ET.SubElement(root, "Lesions")
+        # for lesion in self.Lesions:
+        #     lesion_element = ET.SubElement(lesions_element, "Lesion")
+        #     ET.SubElement(lesion_element, "LesionName").text = str(lesion.get('LesionName', 'Unknown'))
+        #     ET.SubElement(lesion_element, "LesionType").text = str(lesion.get('LesionType', 'Unknown'))
+        #     ET.SubElement(lesion_element, "Center_X").text = str(lesion.get('Center_X', 'N/A'))
+        #     ET.SubElement(lesion_element, "Center_Y").text = str(lesion.get('Center_Y', 'N/A'))
+        #     ET.SubElement(lesion_element, "Center_Z").text = str(lesion.get('Center_Z', 'N/A'))
+        #     ET.SubElement(lesion_element, "Height").text = str(lesion.get('Height', 'N/A'))
+        #     ET.SubElement(lesion_element, "Width").text = str(lesion.get('Width', 'N/A'))
+        #     ET.SubElement(lesion_element, "Depth").text = str(lesion.get('Depth', 'N/A'))
 
         # Write the tree to a file
         tree = ET.ElementTree(root)
@@ -558,7 +708,7 @@ class Phantom:
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
     
-    def write_vctx(self, out_phantom, xml): # Used in Deformation
+    def write_vctx(self, out_phantom, xml): 
         # Temporary directory to extract zip contents
         out_dir = xml.Output_Phantom
         temp_dir = (out_dir.split('/')[-1]).replace('.vctx', '')
@@ -567,46 +717,34 @@ class Phantom:
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir+"/Private")
 
-        # TODO: Fix this. Only works for phantoms with the same name.
-        with zip.ZipFile(self.file_path, mode='r') as filezip:           
-            filezip.extract(self.file_name+"/Private/BreastPhantomGenerator.xml", './')
-            filezip.extract(self.file_name+"/Private/XPL_AttenuationTable.xml", './')
-
-        # Replace files
-        self.write_xml(out_phantom, temp_dir, temp_dir+"/Phantom.xml", "DEFORM_"+xml.View)
-        out_phantom.astype('uint8').tofile(temp_dir+"/Phantom.dat")
-        shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomDeformer.xml")
-
-        # Compress files
-        filezip = zip.ZipFile(out_dir, "w")
-        for dirname, subdirs, files in os.walk(temp_dir):
-            filezip.write(dirname)
-            for filename in files:
-                filezip.write(os.path.join(dirname, filename), compress_type=zip.ZIP_DEFLATED)
-        filezip.close()
-            
-        #Clean up the temporary directory
-        shutil.rmtree(temp_dir)
-
-    def write_vctx(self, xml): # Used in Insertion
-        # Temporary directory to extract zip contents
-        out_dir = xml.Output_Phantom
-        temp_dir = (out_dir.split('/')[-1]).replace('.vctx', '')
-    
-        # Create a temporary directory to work in
-        if not os.path.exists(temp_dir):
-            os.makedirs(temp_dir+"/Private")
+        flag_def = False
 
         # TODO: Fix this. Only works for phantoms with the same name.
         with zip.ZipFile(self.file_path, mode='r') as filezip:
-            filezip.extract(self.file_name+"/Private/BreastPhantomDeformer.xml", './')           
-            filezip.extract(self.file_name+"/Private/BreastPhantomGenerator.xml", './')
-            filezip.extract(self.file_name+"/Private/XPL_AttenuationTable.xml", './')
+            file_list = filezip.namelist()  # Get list of files in zip      
+            
+            breast_phantom_gen_path = self.file_name + "/Private/BreastPhantomGenerator.xml"
+            attenuation_table_path = self.file_name + "/Private/XPL_AttenuationTable.xml"
+            deformation_path = self.file_name + "/Private/BreastPhantomDeformer.xml"
 
+            if breast_phantom_gen_path in file_list:
+                filezip.extract(breast_phantom_gen_path, './')
+                filezip.extract(attenuation_table_path, './')
+                
+            if deformation_path in file_list:
+                filezip.extract(deformation_path, './')
+                flag_def = True
+        
         # Replace files
-        self.write_xml(self, temp_dir, temp_dir+"/Phantom.xml")
-        self.voxel_data.astype('uint8').tofile(temp_dir+"/Phantom.dat")
-        shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomDeformer.xml")
+        out_phantom.astype('uint8').tofile(temp_dir+"/Phantom.dat")
+        
+        if not flag_def: # Deformation
+            self.write_xml(out_phantom, temp_dir, temp_dir+"/Phantom.xml", xml)
+            shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomDeformer.xml")
+
+        else: # Insertion
+            self.write_xml(out_phantom, temp_dir, temp_dir+"/Phantom.xml")
+            shutil.copy(xml.xml_file, temp_dir+"/Private/BreastPhantomInserter.xml")
 
         # Compress files
         filezip = zip.ZipFile(out_dir, "w")
@@ -617,4 +755,4 @@ class Phantom:
         filezip.close()
             
         #Clean up the temporary directory
-        shutil.rmtree(temp_dir)
+        #shutil.rmtree(temp_dir)

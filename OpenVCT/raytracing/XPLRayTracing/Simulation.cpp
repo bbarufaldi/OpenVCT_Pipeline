@@ -131,6 +131,7 @@ bool Simulation::simulate(signed short acqID, unsigned short *image)
 {
     bool status = true; // return value
     
+    
     Image<double> outImage(machine->getDetector()->elementCountX, machine->getDetector()->elementCountY);
     
     status = process(acqID, 0, &outImage);

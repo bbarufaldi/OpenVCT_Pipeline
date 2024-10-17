@@ -323,6 +323,7 @@ int XPLRayTracing::GetAcquisitionCount()
 
 XPLAcquisition XPLRayTracing::GetAcquisition(int i)
 {
+    
     XPLAcquisition acq;    
     
     if ((i >= 0) && (i < GetAcquisitionCount()))
