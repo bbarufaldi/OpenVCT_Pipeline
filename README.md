@@ -1,6 +1,6 @@
 # **OpenVCT** 
 
-![OpenVCT Logo](https://your-logo-url-here.com)  
+![OpenVCT Logo](https://github.com/bbarufaldi/OpenVCT_Pipeline/tree/feature_Inserter/figs/logo.png)  
 *Virtual Clinical Trials Platform for Medical Imaging*
 
 ---
@@ -113,12 +113,31 @@ noise.add_noise()
 
 OpenVCT is an ongoing project with the following limitations:
 
-1) Lack of finer structures. A simplex-based method has been implemented and will be integrated.
+1) Lack of finer structures simulated in the breast. A simplex-based method has been implemented and will be integrated. [GitHub](https://github.com/jpvt/NoiseVolumesDemo)
 2) Compressions are limited to CC and ML views; the pectoralis muscle is not simulated.
 3) Scatter is not implemented in the ray tracing approach.
 
 ## **Licenses**
 
+## **Contact**
+
+For any inquiries or issues with the project, please reach out to our team's GitHub webpage (issues section):
+
+X-ray Physics Laboratory (XPL) | [GitHub](https://github.com/upenn/xpl/xpl-OPENVCT_PIPELINE)
+
+For other specific questions, contact: 
+
+Bruno Barufaldi – Bruno.Barufaldi@pennmedicine.upenn.edu | [GitHub](https://github.com/bbarufaldi)
+Andrew Maidment – Andrew.mMidment@pennmedicine.upenn.edu | [GitHub](https://github.com/maidment)
+
 ## **Contributors**
 
-## **Contact**
+We are very thankful for all contributors to this project:
+
+Marcelo Vieira and LAVI-USP - mvieira@sc.usp.br | [GitHub](https://github.com/LAVI-USP)
+Miguel Lago and FDA (VICTRE Project) - miguel.lago@fda.hhs.gov | [GitHub](https://github.com/malago86)
+
+## **Funding Sources**
+
+Terri-Brodeur Breast Cancer Foundation with grant 2023 TBBCF  (PI: Barufaldi)
+Susan G. Komen Foundation with grant 2022 CCR231010477 (PI: Barufaldi)

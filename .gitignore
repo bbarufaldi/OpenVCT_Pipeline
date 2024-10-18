@@ -2,9 +2,6 @@
 **\__pycache__
 *.pyc
 *.vctx
-*.xml
-*.feb
-*.log
 *.dat
 *.raw
 *.exe

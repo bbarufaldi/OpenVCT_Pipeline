@@ -6,3 +6,5 @@
 *.exe
 *.zip
 *.npz
+*.log
+*.feb
