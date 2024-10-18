@@ -93,9 +93,9 @@ subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDef
 
 References for methodology:
 
-Lago, M. A., Maidment, Andrew. D. A., Bakic, P. R. (2013). Modelling of mammographic compression of anthropomorphic software breast phantom using FEBio. Int’l Symposium on Computer Methods in Biomechanics and Biomedical Engineering.
+Lago, M. A., Maidment, Andrew. D. A., Bakic, P. R. (2013). Modelling of mammographic compression of anthropomorphic software breast phantom using FEBio. Intl Symposium on Computer Methods in Biomechanics and Biomedical Engineering.
 
-Barufaldi, B., Bakic, P. R., Pokrajac, D. D., Lago, M. A., Maidment, A. D. A. (2018). Developing populations of software breast phantoms for virtual clinical trials. <i>14th International Workshop on Breast Imaging (IWBI 2018), July, 73. [https://doi.org/10.1117/12.2318473](https://doi.org/10.1117/12.2318473)
+Barufaldi, B., Bakic, P. R., Pokrajac, D. D., Lago, M. A., Maidment, A. D. A. (2018). Developing populations of software breast phantoms for virtual clinical trials. 14th International Workshop on Breast Imaging (IWBI 2018), July, 73. [https://doi.org/10.1117/12.2318473](https://doi.org/10.1117/12.2318473)
 
 ### **3. OpenVCT.insert**
 
