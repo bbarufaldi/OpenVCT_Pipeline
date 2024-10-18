@@ -12,8 +12,9 @@ This project is an updated, containerized implementation of the original version
 
 For more details on the methodology behind OpenVCT, please refer to the following publications:
 
-- [1] Add reference
-- [2] Add reference
+- [1] Barufaldi, B., Bakic, P. R., Higginbotham, D., Maidment, A. D. A. (2018). OpenVCT: a GPU-accelerated virtual clinical trial pipeline for mammography and digital breast tomosynthesis. SPIE Medical Imaging 2018, 1057358(March), 10573588. [https://doi.org/10.1117/12.2294935](https://doi.org/10.1117/12.2294935)
+
+- [2] Barufaldi, B., Maidment, A. D. A., Dustler, M., Axelsson, R., Tomic, H., Zackrisson, S., Tingberg, A.,Bakic, P. R. (2021). Virtual Clinical Trials in Medical Imaging System Evaluation and Optimisation. Radiation Protection Dosimetry, 195 (3–4), 363–371. [https://doi.org/10.1093/rpd/ncab080](https://doi.org/10.1093/rpd/ncab080)
 
 ---
 
@@ -114,7 +115,9 @@ noise.add_noise()
 OpenVCT is an ongoing project with the following limitations:
 
 1) Lack of finer structures simulated in the breast. A simplex-based method has been implemented and will be integrated. [GitHub](https://github.com/jpvt/NoiseVolumesDemo)
+
 2) Compressions are limited to CC and ML views; the pectoralis muscle is not simulated.
+
 3) Scatter is not implemented in the ray tracing approach.
 
 ## **Licenses**
@@ -142,4 +145,5 @@ Miguel Lago and FDA (VICTRE Project) - miguel.lago@fda.hhs.gov | [GitHub](https:
 ## **Funding Sources**
 
 Terri-Brodeur Breast Cancer Foundation with grant 2023 TBBCF  (PI: Barufaldi)
+
 Susan G. Komen Foundation with grant 2022 CCR231010477 (PI: Barufaldi)
