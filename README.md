@@ -128,6 +128,7 @@ X-ray Physics Laboratory (XPL) | [GitHub](https://github.com/upenn/xpl/xpl-OPENV
 For other specific questions, contact: 
 
 Bruno Barufaldi – Bruno.Barufaldi@pennmedicine.upenn.edu | [GitHub](https://github.com/bbarufaldi)
+
 Andrew Maidment – Andrew.mMidment@pennmedicine.upenn.edu | [GitHub](https://github.com/maidment)
 
 ## **Contributors**
@@ -135,6 +136,7 @@ Andrew Maidment – Andrew.mMidment@pennmedicine.upenn.edu | [GitHub](https://gi
 We are very thankful for all contributors to this project:
 
 Marcelo Vieira and LAVI-USP - mvieira@sc.usp.br | [GitHub](https://github.com/LAVI-USP)
+
 Miguel Lago and FDA (VICTRE Project) - miguel.lago@fda.hhs.gov | [GitHub](https://github.com/malago86)
 
 ## **Funding Sources**
