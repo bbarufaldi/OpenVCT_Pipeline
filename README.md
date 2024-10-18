@@ -12,9 +12,9 @@ This project is an updated, containerized implementation of the original version
 
 For more details on the methodology behind OpenVCT, please refer to the following publications:
 
-- [1] Barufaldi, B., Bakic, P. R., Higginbotham, D., Maidment, A. D. A. (2018). OpenVCT: a GPU-accelerated virtual clinical trial pipeline for mammography and digital breast tomosynthesis. SPIE Medical Imaging 2018, 1057358(March), 10573588. [https://doi.org/10.1117/12.2294935](https://doi.org/10.1117/12.2294935)
+- Barufaldi, B., Bakic, P. R., Higginbotham, D., Maidment, A. D. A. (2018). OpenVCT: a GPU-accelerated virtual clinical trial pipeline for mammography and digital breast tomosynthesis. SPIE Medical Imaging 2018, 1057358(March), 10573588. [https://doi.org/10.1117/12.2294935](https://doi.org/10.1117/12.2294935)
 
-- [2] Barufaldi, B., Maidment, A. D. A., Dustler, M., Axelsson, R., Tomic, H., Zackrisson, S., Tingberg, A.,Bakic, P. R. (2021). Virtual Clinical Trials in Medical Imaging System Evaluation and Optimisation. Radiation Protection Dosimetry, 195 (3–4), 363–371. [https://doi.org/10.1093/rpd/ncab080](https://doi.org/10.1093/rpd/ncab080)
+- Barufaldi, B., Maidment, A. D. A., Dustler, M., Axelsson, R., Tomic, H., Zackrisson, S., Tingberg, A.,Bakic, P. R. (2021). Virtual Clinical Trials in Medical Imaging System Evaluation and Optimisation. Radiation Protection Dosimetry, 195 (3–4), 363–371. [https://doi.org/10.1093/rpd/ncab080](https://doi.org/10.1093/rpd/ncab080)
 
 ---
 
@@ -41,9 +41,13 @@ docker build -t openvct .
 # 5. Compile the OpenVCT code:
 docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 compile_pipeline.py
 
-# 6. Create your 'own scripts' to run the steps of our pipeline (follow steps described below). For example, you can modify the file **example.py** and test each step of the OpenVCT pipeline. Finally, run your scripts using the command:
+# 6. Create your 'own scripts' to run the steps of our pipeline (follow steps described below). Execute the pipeline using the command:
+
 docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 example.py
 ```
+
+We suggest you to build your own code following the steps described in **example.py** . 
+
 ---
 
 ## **System Requirements**
@@ -68,6 +72,10 @@ xml = gen.XMLWriter(config=breast.BreastConfig.CUP_C,
 subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", xml.xml_file])
 ```
 
+References for methodology: 
+
+Pokrajac, D. D., Maidment, A. D. A., Bakic, P. R. (2012). Optimized generation of high resolution breast anthropomorphic software phantoms. Medical Physics, 39 (4), 2290–2302. [https://doi.org/10.1118/1.3697523](https://doi.org/10.1118/1.3697523)
+
 ### **2. OpenVCT.deform**
 
 This **GPU-accelerated** step deforms (i.e., compresses) the breast phantoms. The deformation can be applied for standard mammographic compression views (CC or ML). Below is an example of how to configure the phantom deformation:
@@ -82,9 +90,16 @@ xml = defo.XMLWriter(config=deform.DeformerConfig.CUPC_CC,
 # Run the deformation process
 subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", xml.xml_file])
 ```
+
+References for methodology:
+
+Lago, M. A., Maidment, Andrew. D. A., Bakic, P. R. (2013). Modelling of mammographic compression of anthropomorphic software breast phantom using FEBio. Int’l Symposium on Computer Methods in Biomechanics and Biomedical Engineering.
+
+Barufaldi, B., Bakic, P. R., Pokrajac, D. D., Lago, M. A., Maidment, A. D. A. (2018). Developing populations of software breast phantoms for virtual clinical trials. <i>14th International Workshop on Breast Imaging (IWBI 2018), July, 73. [https://doi.org/10.1117/12.2318473](https://doi.org/10.1117/12.2318473)
+
 ### **3. OpenVCT.insert**
 
-This method allows insertion of **lesions** (e.g., calcifications, masses) into breast phantoms using voxel addition or replacement.
+This method allows insertion of **lesions** (e.g., calcifications, masses) into breast phantoms using voxel addition (composite materials) or replacement.
 
 ```python
 # Example lesion insertion
@@ -98,6 +113,12 @@ xml = ins.Inserter(in_phantom = "../deform/vctx/PhantomC.vctx",
 # Optional weight parameter
 subprocess.call(["python3", "./LesionInserter.py", xml.xml_file, '0.3'])
 ```
+
+References for methodology:
+
+Barufaldi, B., Vent, T. L., Bakic, P. R., Maidment, A. D. A. (2022). Computer simulations of case difficulty in digital breast tomosynthesis using virtual clinical trials. Med. Phys, 49(4), 2220–2232. [https://doi.org/10.1002/mp.15553](https://doi.org/10.1002/mp.15553)
+
+Barufaldi, B., Acciavatti, R. J., Conant, E. F., Maidment, A. D. A. (2023). Impact of super-resolution and image acquisition on the detection of calcifications in digital breast tomosynthesis. European Radiology, 1–11. [https://doi.org/10.1007/s00330-023-10103-6](https://doi.org/10.1007/s00330-023-10103-6)
 
 ### **4. OpenVCT.raytracing**
 
@@ -119,6 +140,10 @@ noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC,
                          output_folder="noise/proj/phantomC-proj")
 noise.add_noise()
 ```
+
+References for methodology:
+
+Borges, L. R., Barufaldi, B., Caron, R. F., Bakic, P. R., Foi, A., Maidment, A. D. A., Vieira, M. A. C. (2019). Technical Note: Noise models for virtual clinical trials of digital breast tomosynthesis. Medical Physics, 46(6), 2683–2689. [https://doi.org/10.1002/mp.13534](https://doi.org/10.1002/mp.13534)
 
 ---
 
