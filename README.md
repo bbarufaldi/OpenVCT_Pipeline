@@ -18,7 +18,7 @@ For more details on the methodology behind OpenVCT, please refer to the followin
 
 ---
 
-## **Installation**
+## **Installation and Execution**
 
 OpenVCT is containerized for simplicity. Follow the steps below to get started:
 
@@ -31,6 +31,18 @@ https://www.docker.com/
 
 # For Windows, first install WSL:
 https://learn.microsoft.com/en-us/windows/wsl/install
+
+# 3. Clone our repository:
+git clone https://github.com/bbarufaldi/OpenVCT_Pipeline.git
+
+# 4. Run the following command on your OPENVCT_PIPELINE directory: 
+docker build -t openvct .
+
+# 5. Compile the OpenVCT code:
+docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 compile_pipeline.py
+
+# 6. Create your 'own scripts' to run the steps of our pipeline (follow steps described below). For example, you can modify the file **example.py** and test each step of the OpenVCT pipeline. Finally, run your scripts using the command:
+docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 example.py
 ```
 ---
 
