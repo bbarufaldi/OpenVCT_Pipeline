@@ -8,7 +8,7 @@
 ## **Project Overview**  
 The **OpenVCT** project provides a unified platform for conducting **Virtual Clinical Trials (VCTs)** in medical imaging. It includes tools for simulating patient accrual, reader studies, and generating cohorts of patients and medical images. To ensure cross-system compatibility, OpenVCT leverages standard data formats like **DICOM**.
 
-This project is an updated, containerized implementation of the original version hosted on SourceForge ([link here](https://sourceforge.net/projects/openvct/)). We utilize **Docker** as the development platform for our applications.
+This project is an updated, containerized implementation of the original version hosted on SourceForge ([link here](https://sourceforge.net/projects/openvct/)). We use **Docker** as the development platform for our applications.
 
 For more details on the methodology behind OpenVCT, please refer to the following publications:
 
@@ -26,11 +26,11 @@ OpenVCT is containerized for simplicity. Follow the steps below to get started:
 # 1. Install CUDA Toolkit:
 https://developer.nvidia.com/cuda-toolkit
 
-# 2. Install Docker Desktop:
+# 2. Install WSL* (Linux distro for Windows) and Docker Desktop:
+https://learn.microsoft.com/en-us/windows/wsl/install
 https://www.docker.com/
 
-# For Windows, first install WSL:
-https://learn.microsoft.com/en-us/windows/wsl/install
+## *Skip the WSL installation for Linux SO
 
 # 3. Clone our repository:
 git clone https://github.com/bbarufaldi/OpenVCT_Pipeline.git
@@ -42,7 +42,6 @@ docker build -t openvct .
 docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 compile_pipeline.py
 
 # 6. Create your 'own scripts' to run the steps of our pipeline (follow steps described below). Execute the pipeline using the command:
-
 docker run -it --ipc=host -v ${PWD}:/app/ --gpus all openvct python3 example.py
 ```
 
