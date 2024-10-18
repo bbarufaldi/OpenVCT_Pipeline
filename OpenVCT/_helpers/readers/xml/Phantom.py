@@ -755,4 +755,4 @@ class Phantom:
         filezip.close()
             
         #Clean up the temporary directory
-        #shutil.rmtree(temp_dir)
+        shutil.rmtree(temp_dir)

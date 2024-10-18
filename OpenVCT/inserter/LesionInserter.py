@@ -253,12 +253,13 @@ class LesionInserter:
         # Log or return a message indicating completion of the insertion
         self.log.info("Additive lesion insertion with index reuse completed.")
         # print(self.Phantom.index_table)
-        imwrite('phantom.tif', self.Phantom.voxel_data)
+        # imwrite('phantom.tif', self.Phantom.voxel_data)
         
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Lesion Inserter XML Reader")
     parser.add_argument('xml_input', type=str, help='Path to the XML file to read')
+    parser.add_argument('weight', type=str, help='Lesion weight')
 
     args = parser.parse_args()
     if args.xml_input == None:
@@ -266,9 +267,10 @@ if __name__ == "__main__":
         exit
 
     else:
+        weight = float(args.weight) if args.weight is not None else 0.5
         reader = ins.Inserter(args.xml_input)
         lesion_inserter = LesionInserter(reader)
-        lesion_inserter.insertion_replacement(total_weight_replace = 0.1)
+        lesion_inserter.insertion_additive(total_weight_reduction = weight)
 
         output_phantom = lesion_inserter.Phantom.voxel_data # Get Phantom
         #output_phantom = np.transpose(lesion_inserter.Phantom.voxel_data, (0, 2, 1)) # Transpose for CC compression

@@ -53,12 +53,12 @@ os.chdir('/app/OpenVCT/inserter')
 xml = ins.Inserter(in_phantom = "../deform/vctx/PhantomC.vctx",
                    out_phantom = "./vctx/PhantomC.vctx",
                    xml_file = "./xml/PhantomC.xml",
-                   num_lesions = 30,
-                   size_mm = [(2, 2, 2)],
-                   db_dir='db/cluster'
+                   num_lesions = 5,
+                   size_mm = [(25, 25, 25)],
+                   db_dir='db/mass'
                    ) 
 
-subprocess.call(["python3", "./LesionInserter.py", xml.xml_file])
+subprocess.call(["python3", "./LesionInserter.py", xml.xml_file, '0.3']) # optional argument for weight of lesion
 
 # 4.1) Change path to Ray Tracing (Noiseless Model)
 os.chdir(os.environ['HOME'])
@@ -76,7 +76,7 @@ subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", xml.xml_file])
 os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT')
 
-# noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC, 
-#                         input_folder="raytracing/proj/phantomC-proj",
-#                         output_folder="noise/proj/phantomC-proj")
-# noise.add_noise()
+noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC, 
+                        input_folder="raytracing/proj/phantomC-proj",
+                        output_folder="noise/proj/phantomC-proj")
+noise.add_noise()

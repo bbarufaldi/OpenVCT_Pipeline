@@ -13,7 +13,8 @@ from readers.xml import Phantom as ph
 class Inserter:
     def __init__(self, in_phantom, out_phantom, xml_file, 
                  num_lesions=1, size_mm=[(7, 7, 3)],
-                 lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, db_dir='db/mass'):
+                 lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, 
+                 db_dir='db/mass'):
         
         self.Software_Name = "LesionInserter"
         self.Software_Version = "2.0"
@@ -182,7 +183,7 @@ class Inserter:
             })
 
         self.write_xml(self.xml_file)
-        imwrite('binary_vol.tif', vol)
+        imwrite('binary_mask.tif', vol)
 
     def read_lesion(self, zip_file):
         """       

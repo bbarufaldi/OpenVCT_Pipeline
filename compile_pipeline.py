@@ -22,8 +22,8 @@ def compile_code(command):
 if __name__ == "__main__":
     
     #Compile C++ version of code
-    # print("Compiling Anatomy Code...")
-    # compile_code("OpenVCT/anatomy/Makefile")
+    print("Compiling Anatomy Code...")
+    compile_code("OpenVCT/anatomy/Makefile")
     
     print("Compiling RayTracing Code...")
     compile_code("OpenVCT/raytracing/Makefile")
