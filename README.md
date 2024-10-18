@@ -1,6 +1,6 @@
 # **OpenVCT** 
 
-![OpenVCT Logo](https://github.com/bbarufaldi/OpenVCT_Pipeline/tree/feature_Inserter/figs/logo.png)  
+![OpenVCT Logo](figs/logo.png)  
 *Virtual Clinical Trials Platform for Medical Imaging*
 
 ---
