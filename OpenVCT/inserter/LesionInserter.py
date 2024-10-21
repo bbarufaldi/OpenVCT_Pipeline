@@ -272,8 +272,6 @@ if __name__ == "__main__":
         lesion_inserter = LesionInserter(reader)
         lesion_inserter.insertion_additive(total_weight_reduction = weight)
 
-        output_phantom = lesion_inserter.Phantom.voxel_data # Get Phantom
-        #output_phantom = np.transpose(lesion_inserter.Phantom.voxel_data, (0, 2, 1)) # Transpose for CC compression
-        lesion_inserter.Phantom.write_vctx(output_phantom, reader)
+        lesion_inserter.Phantom.write_vctx(lesion_inserter.Phantom.voxel_data, reader)
 
        

@@ -77,6 +77,6 @@ os.chdir(os.environ['HOME'])
 os.chdir('/app/OpenVCT')
 
 noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC, 
-                        input_folder="raytracing/proj/phantomC-proj",
-                        output_folder="noise/proj/phantomC-proj")
+                        input_folder="./raytracing/proj/PhantomC-proj",
+                        output_folder="./noise/proj/PhantomC-proj")
 noise.add_noise()

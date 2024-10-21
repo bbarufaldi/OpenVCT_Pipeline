@@ -58,6 +58,14 @@ We suggest you to build your own code following the steps described in **example
 
 ## **Pipeline Documentation**
 
+### **Headers, Toolkit, and OpenVCT._helpers**
+
+**Toolkit**: The toolkit is necessary for compiling the C++ version from the SourceForge implementation ([link here](https://sourceforge.net/projects/openvct/)), including ZipLib, which is used to compress phantoms with LZMA compression.
+
+**Constants**: Defines various constants for phantom properties (e.g., dimension, voxel size, volume), deformation modes (CC or ML compression), and system configurations (acquisition, geometry, exposure settings, etc.).
+
+**Readers, writers, and wrappers**: Auxiliary methods for reading and writing text files as well as methods convert to different file formats.
+
 ### **1. OpenVCT.anatomy**  
 This **GPU-accelerated** step creates breast phantoms. You'll need to define the phantom configuration as follows:
 
@@ -71,7 +79,7 @@ xml = gen.XMLWriter(config=breast.BreastConfig.CUP_C,
 subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", xml.xml_file])
 ```
 
-References for methodology: 
+<i>References for methodology</i>:
 
 Pokrajac, D. D., Maidment, A. D. A., Bakic, P. R. (2012). Optimized generation of high resolution breast anthropomorphic software phantoms. Medical Physics, 39 (4), 2290–2302. [https://doi.org/10.1118/1.3697523](https://doi.org/10.1118/1.3697523)
 
@@ -90,7 +98,7 @@ xml = defo.XMLWriter(config=deform.DeformerConfig.CUPC_CC,
 subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", xml.xml_file])
 ```
 
-References for methodology:
+<i>References for methodology</i>: 
 
 Lago, M. A., Maidment, Andrew. D. A., Bakic, P. R. (2013). Modelling of mammographic compression of anthropomorphic software breast phantom using FEBio. Intl Symposium on Computer Methods in Biomechanics and Biomedical Engineering.
 
@@ -113,7 +121,7 @@ xml = ins.Inserter(in_phantom = "../deform/vctx/PhantomC.vctx",
 subprocess.call(["python3", "./LesionInserter.py", xml.xml_file, '0.3'])
 ```
 
-References for methodology:
+<i>References for methodology</i>: 
 
 Barufaldi, B., Vent, T. L., Bakic, P. R., Maidment, A. D. A. (2022). Computer simulations of case difficulty in digital breast tomosynthesis using virtual clinical trials. Med. Phys, 49(4), 2220–2232. [https://doi.org/10.1002/mp.15553](https://doi.org/10.1002/mp.15553)
 
@@ -127,7 +135,7 @@ Simulate x-ray images using GPU-accelerated raytracing methods. A noise model si
 # Define ray tracing settings
 xml = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
                      phantom_name="../inserter/vctx/PhantomC.vctx", 
-                     folder_name="proj/PhantomC-proj",
+                     folder_name="./proj/PhantomC-proj",
                      xml_file = "./xml/PhantomC.xml")
 
 # Run ray tracing
@@ -135,20 +143,20 @@ subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", xml.xml_file])
 
 # Add clinical noise
 noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC, 
-                         input_folder="raytracing/proj/phantomC-proj",
-                         output_folder="noise/proj/phantomC-proj")
+                         input_folder="./raytracing/proj/PhantomC-proj",
+                         output_folder="./noise/proj/PhantomC-proj")
 noise.add_noise()
 ```
 
-References for methodology:
+<i>References for methodology</i>:
 
 Borges, L. R., Barufaldi, B., Caron, R. F., Bakic, P. R., Foi, A., Maidment, A. D. A., Vieira, M. A. C. (2019). Technical Note: Noise models for virtual clinical trials of digital breast tomosynthesis. Medical Physics, 46(6), 2683–2689. [https://doi.org/10.1002/mp.13534](https://doi.org/10.1002/mp.13534)
 
 ---
 
-## **Disclosures**
+## **Disclaimer**
 
-OpenVCT is an ongoing project with the following limitations:
+OpenVCT is an ongoing project and there are features and modules under development:
 
 1) Lack of finer structures simulated in the breast. A simplex-based method has been implemented and will be integrated. [GitHub](https://github.com/jpvt/NoiseVolumesDemo)
 
@@ -172,7 +180,9 @@ Andrew Maidment – Andrew.mMidment@pennmedicine.upenn.edu | [GitHub](https://gi
 
 ## **Contributors**
 
-We are very thankful for all contributors to this project:
+We are very thankful for all contributors to the version of this project:
+
+Predrag R. Bakic - predrag.bakic@med.lu.se
 
 Marcelo Vieira and LAVI-USP - mvieira@sc.usp.br | [GitHub](https://github.com/LAVI-USP)
 
