@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import subprocess
 
 class XMLWriter:
     def __init__(self, config, phantom_name, xml_file):
@@ -7,6 +8,9 @@ class XMLWriter:
         self.phantom_name = phantom_name
         self.xml_file = xml_file
         self.write_xml(xml_file)
+
+    def generate_phantom(self):
+        subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", self.xml_file])
 
     def prettify(self, elem):
         """Return a pretty-printed XML string for the Element."""

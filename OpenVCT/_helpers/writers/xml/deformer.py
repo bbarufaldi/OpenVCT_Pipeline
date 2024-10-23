@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import subprocess
 
 class XMLWriter:
     def __init__(self, config, in_phantom, out_phantom, xml_file):
@@ -8,6 +9,9 @@ class XMLWriter:
         self.out_phantom = out_phantom
         self.xml_file = xml_file
         self.write_xml(xml_file)
+
+    def compress_phantom(self):
+        subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", self.xml_file])
 
     def prettify(self, elem):
         """Return a pretty-printed XML string for the Element."""

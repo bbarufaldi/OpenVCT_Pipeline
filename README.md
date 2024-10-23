@@ -71,12 +71,12 @@ This **GPU-accelerated** step creates breast phantoms. You'll need to define the
 
 ```python
 # Set up the XML file
-xml = gen.XMLWriter(config=breast.BreastConfig.CUP_C, 
-                    phantom_name="PhantomC",
-                    xml_file = "./xml/PhantomC.xml")
+pipeline = generation.XMLWriter(config=breast.BreastConfig.CUP_C, 
+                                phantom_name="PhantomC",
+                                xml_file = "./xml/PhantomC.xml")
 
 # Generate phantom
-subprocess.call(["./BreastPhantomGenerator_docker", "-xml_input", xml.xml_file])
+pipeline.generate_phantom()
 ```
 
 <i>References for methodology</i>:
@@ -89,13 +89,13 @@ This **GPU-accelerated** step deforms (i.e., compresses) the breast phantoms. Th
 
 ```python
 # Set up the XML file for deformation
-xml = defo.XMLWriter(config=deform.DeformerConfig.CUPC_CC, 
-                     in_phantom = "../anatomy/vctx/PhantomC.vctx",
-                     out_phantom = "./vctx/PhantomC.vctx",
-                     xml_file = "./xml/PhantomC.xml")
+pipeline = deformation.XMLWriter(config=deform.DeformerConfig.CUPC_CC, 
+                                 in_phantom = "../anatomy/vctx/PhantomC.vctx",
+                                 out_phantom = "./vctx/PhantomC.vctx",
+                                 xml_file = "./xml/PhantomC.xml")
 
 # Run the deformation process
-subprocess.call(["xvfb-run", "-s", "-screen 0 800x600x24", "python3", "VolumeDeformer.py", xml.xml_file])
+pipeline.compress_phantom()
 ```
 
 <i>References for methodology</i>: 
@@ -110,15 +110,16 @@ This method allows insertion of **lesions** (e.g., calcifications, masses) into 
 
 ```python
 # Example lesion insertion
-xml = ins.Inserter(in_phantom = "../deform/vctx/PhantomC.vctx",
-                   out_phantom = "./vctx/PhantomC.vctx",
-                   xml_file = "./xml/PhantomC.xml",
-                   num_lesions = 2,
-                   size_mm = [(13, 13, 7)],
-                   db_dir='db/mass')
+pipeline = insertion.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
+                               out_phantom = "./vctx/PhantomC.vctx",
+                               xml_file = "./xml/PhantomC.xml",
+                               num_lesions = 2,
+                               size_mm = [(13, 13, 7)],
+                               db_dir='db/mass',
+                               weight = 0.5)
 
 # Optional weight parameter
-subprocess.call(["python3", "./LesionInserter.py", xml.xml_file, '0.3'])
+pipeline.insert_lesions()
 ```
 
 <i>References for methodology</i>: 
@@ -133,13 +134,13 @@ Simulate x-ray images using GPU-accelerated raytracing methods. A noise model si
 
 ```python
 # Define ray tracing settings
-xml = proj.XMLWriter(config=system.SystemConfig.HOLOGIC, 
-                     phantom_name="../inserter/vctx/PhantomC.vctx", 
-                     folder_name="./proj/PhantomC-proj",
-                     xml_file = "./xml/PhantomC.xml")
+pipeline = projection.XMLWriter(config=system.SystemConfig.HOLOGIC, 
+                                phantom_name="../inserter/vctx/PhantomC.vctx", 
+                                folder_name="./proj/PhantomC-proj",
+                                xml_file = "./xml/PhantomC.xml")
 
 # Run ray tracing
-subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", xml.xml_file])
+pipeline.project()
 
 # Add clinical noise
 noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC, 

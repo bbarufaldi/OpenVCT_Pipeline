@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import subprocess
 
 class XMLWriter:
     def __init__(self, config, phantom_name, folder_name, xml_file):
@@ -8,6 +9,9 @@ class XMLWriter:
         self.folder_name = folder_name
         self.xml_file = xml_file
         self.write_xml(xml_file)
+
+    def project(self):
+        subprocess.call(["./XPLProjectionSim_GPU_docker", "-xml_input", self.xml_file])
 
     def prettify(self, elem):
         """Fix XML identation string for the Element."""

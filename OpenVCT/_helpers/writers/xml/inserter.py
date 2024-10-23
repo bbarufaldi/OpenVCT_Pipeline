@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import subprocess
 
 from tifffile import imwrite
 import numpy as np
@@ -10,11 +11,11 @@ from scipy.ndimage import zoom
 
 from readers.xml import Phantom as ph
 
-class Inserter:
+class XMLWriter:
     def __init__(self, in_phantom, out_phantom, xml_file, 
                  num_lesions=1, size_mm=[(7, 7, 3)],
                  lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, 
-                 db_dir='db/mass'):
+                 db_dir='db/mass', weight=0.5):
         
         self.Software_Name = "LesionInserter"
         self.Software_Version = "2.0"
@@ -31,6 +32,7 @@ class Inserter:
         self.lesion_centers = centers
         self.bounding_boxes = bounding_boxes
         self.db_dir = db_dir
+        self.weight = weight
 
         self.Phantom = ph.Phantom(self.Input_Phantom)
         
@@ -43,6 +45,9 @@ class Inserter:
 
         # Check lesions for insertion and 
         self.select_lesions()
+
+    def insert_lesions(self):
+        subprocess.call(["python3", "./LesionInserter.py", self.xml_file, str(self.weight)])
     
     def write_xml(self, output_file):
         root = ET.Element("name")
