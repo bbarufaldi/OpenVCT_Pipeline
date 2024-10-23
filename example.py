@@ -55,7 +55,8 @@ pipeline = insertion.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
                                num_lesions = 5,
                                size_mm = [(25, 25, 25)],
                                db_dir='db/mass',
-                               weight=0.3) 
+                               weight=0.3,
+                               method=1) # 0 for voxel replacement, 1 for voxel additive (partial volume)
 
 pipeline.insert_lesions()
 

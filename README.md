@@ -70,6 +70,10 @@ We suggest you to build your own code following the steps described in **example
 This **GPU-accelerated** step creates breast phantoms. You'll need to define the phantom configuration as follows:
 
 ```python
+# Required imports
+import constants.breast_constants as breast
+import writers.xml.breast_generator as generation
+
 # Set up the XML file
 pipeline = generation.XMLWriter(config=breast.BreastConfig.CUP_C, 
                                 phantom_name="PhantomC",
@@ -88,6 +92,10 @@ Pokrajac, D. D., Maidment, A. D. A., Bakic, P. R. (2012). Optimized generation o
 This **GPU-accelerated** step deforms (i.e., compresses) the breast phantoms. The deformation can be applied for standard mammographic compression views (CC or ML). Below is an example of how to configure the phantom deformation:
 
 ```python
+# Required imports
+import constants.deform_constants as deform
+import writers.xml.deformer as deformation
+
 # Set up the XML file for deformation
 pipeline = deformation.XMLWriter(config=deform.DeformerConfig.CUPC_CC, 
                                  in_phantom = "../anatomy/vctx/PhantomC.vctx",
@@ -109,6 +117,9 @@ Barufaldi, B., Bakic, P. R., Pokrajac, D. D., Lago, M. A., Maidment, A. D. A. (2
 This method allows insertion of **lesions** (e.g., calcifications, masses) into breast phantoms using voxel addition (composite materials) or replacement.
 
 ```python
+# Required imports
+import writers.xml.inserter as insertion
+
 # Example lesion insertion
 pipeline = insertion.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
                                out_phantom = "./vctx/PhantomC.vctx",
@@ -116,9 +127,10 @@ pipeline = insertion.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
                                num_lesions = 2,
                                size_mm = [(13, 13, 7)],
                                db_dir='db/mass',
-                               weight = 0.5)
+                               weight = 0.5,
+                               method = 1)
 
-# Optional weight parameter
+# Run the lesion insertion process
 pipeline.insert_lesions()
 ```
 
@@ -133,6 +145,10 @@ Barufaldi, B., Acciavatti, R. J., Conant, E. F., Maidment, A. D. A. (2023). Impa
 Simulate x-ray images using GPU-accelerated raytracing methods. A noise model simulates clinical noise (electronic and quantum) using methods developed by the **LAVI-USP** group (Brazil, https://github.com/LAVI-USP).
 
 ```python
+# Required imports
+import constants.system_constants as system
+import writers.xml.xray_tracing as projection
+
 # Define ray tracing settings
 pipeline = projection.XMLWriter(config=system.SystemConfig.HOLOGIC, 
                                 phantom_name="../inserter/vctx/PhantomC.vctx", 

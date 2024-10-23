@@ -260,6 +260,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Lesion Inserter XML Reader")
     parser.add_argument('xml_input', type=str, help='Path to the XML file to read')
     parser.add_argument('weight', type=str, help='Lesion weight')
+    parser.add_argument('method', type=str, help='Insertion method')
 
     args = parser.parse_args()
     if args.xml_input == None:
@@ -268,9 +269,15 @@ if __name__ == "__main__":
 
     else:
         weight = float(args.weight) if args.weight is not None else 0.5
+        method = int(args.method) if args.method is not None else 0
+        
         reader = ins.Inserter(args.xml_input)
         lesion_inserter = LesionInserter(reader)
-        lesion_inserter.insertion_additive(total_weight_reduction = weight)
+
+        if method == 0:
+            lesion_inserter.insertion_replacement(total_weight_replace = weight)
+        else:
+            lesion_inserter.insertion_additive(total_weight_reduction = weight)
 
         lesion_inserter.Phantom.write_vctx(lesion_inserter.Phantom.voxel_data, reader)
 

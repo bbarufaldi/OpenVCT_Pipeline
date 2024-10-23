@@ -15,7 +15,7 @@ class XMLWriter:
     def __init__(self, in_phantom, out_phantom, xml_file, 
                  num_lesions=1, size_mm=[(7, 7, 3)],
                  lesion_names=None, lesion_types=None, centers=None, bounding_boxes=None, 
-                 db_dir='db/mass', weight=0.5):
+                 db_dir='db/mass', weight=0.5, method=0):
         
         self.Software_Name = "LesionInserter"
         self.Software_Version = "2.0"
@@ -33,6 +33,7 @@ class XMLWriter:
         self.bounding_boxes = bounding_boxes
         self.db_dir = db_dir
         self.weight = weight
+        self.method = method
 
         self.Phantom = ph.Phantom(self.Input_Phantom)
         
@@ -47,7 +48,7 @@ class XMLWriter:
         self.select_lesions()
 
     def insert_lesions(self):
-        subprocess.call(["python3", "./LesionInserter.py", self.xml_file, str(self.weight)])
+        subprocess.call(["python3", "./LesionInserter.py", self.xml_file, str(self.weight), str(self.method)])
     
     def write_xml(self, output_file):
         root = ET.Element("name")
