@@ -128,7 +128,7 @@ pipeline = insertion.XMLWriter(in_phantom = "../deform/vctx/PhantomC.vctx",
                                size_mm = [(13, 13, 7)],
                                db_dir='db/mass',
                                weight = 0.5,
-                               method = 1)
+                               method = 1) # 0 for voxel replacement and 1 for voxel additive
 
 # Run the lesion insertion process
 pipeline.insert_lesions()
@@ -193,13 +193,15 @@ For other specific questions, contact:
 
 Bruno Barufaldi – Bruno.Barufaldi@pennmedicine.upenn.edu | [GitHub](https://github.com/bbarufaldi)
 
-Andrew Maidment – Andrew.mMidment@pennmedicine.upenn.edu | [GitHub](https://github.com/maidment)
+Andrew Maidment – Andrew.Maidment@pennmedicine.upenn.edu | [GitHub](https://github.com/maidment)
 
 ## **Contributors**
 
 We are very thankful for all contributors to the version of this project:
 
 Predrag R. Bakic - predrag.bakic@med.lu.se
+
+Hilde Bosmans - hilde.bosmans@uzleuven.be
 
 Marcelo Vieira and LAVI-USP - mvieira@sc.usp.br | [GitHub](https://github.com/LAVI-USP)
 
