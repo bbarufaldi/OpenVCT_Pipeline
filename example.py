@@ -22,6 +22,7 @@ import writers.xml.xray_tracing as projection
 
 # Import Additional Models
 import OpenVCT.noise.NoiseModel as noise
+import OpenVCT.reconstruction.ReconstructionModel as reconstruction
 
 # 1) Change path to Generation
 os.chdir(os.environ['HOME'])
@@ -79,3 +80,17 @@ noise = noise.NoiseModel(config=system.SystemConfig.HOLOGIC,
                         input_folder="./raytracing/proj/PhantomC-proj",
                         output_folder="./noise/proj/PhantomC-proj")
 noise.add_noise()
+
+# 5) Reconstruction
+os.chdir(os.environ['HOME'])
+os.chdir('/app/OpenVCT')
+
+rec = reconstruction.ReconstructionModel(xml_file = "./raytracing/xml/PhantomC.xml",
+                                         input_folder="./noise/proj/PhantomC-proj-60mAs-rlz1",
+                                         output_folder="./reconstruction/rec/PhantomC-rec",
+                                         recon_mm=[0.1, 0.1, 1],
+                                         filterType = 'BP', # BP, FBP, SART, etc.
+                                         cutoff = 0.75
+                                         ) # optional
+
+rec.reconstruct()

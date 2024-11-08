@@ -46,3 +46,9 @@ if __name__ == "__main__":
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
 
+    # Compile Reconstruction
+    os.chdir('OpenVCT/reconstruction/pydbt')
+    
+    print("Compiling Reconstruction Code...")
+    subprocess.call(["python3", "./setup.py", "build_ext", "--inplace"])
+
